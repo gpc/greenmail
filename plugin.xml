@@ -1,0 +1,15 @@
+<plugin name='greenmail' version='1.0' grailsVersion='1.1.1 &gt; *'>
+  <author>Mike Hugo</author>
+  <authorEmail>mike@piragua.com</authorEmail>
+  <title>Greenmail Plugin for Grails</title>
+  <description>\
+Provides a wrapper around GreenMail (http://www.icegreen.com/greenmail/) and provides a view that displays 'sent' messages
+</description>
+  <documentation>http://grails.org/Greenmail+Plugin</documentation>
+  <resources>
+    <resource>DataSource</resource>
+    <resource>UrlMappings</resource>
+    <resource>GreenmailController</resource>
+  </resources>
+  <dependencies />
+</plugin>

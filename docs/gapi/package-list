@@ -1,0 +1,5 @@
+DefaultPackage
+grails-app.conf
+grails-app.controllers
+scripts
+test.unit
