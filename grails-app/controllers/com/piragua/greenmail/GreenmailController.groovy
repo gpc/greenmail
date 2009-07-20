@@ -1,4 +1,4 @@
-package com.wwfy.controller
+package com.piragua.greenmail.controller
 
 import com.icegreen.greenmail.util.GreenMailUtil
 

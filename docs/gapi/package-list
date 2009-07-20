@@ -1,5 +1,3 @@
 DefaultPackage
-grails-app.conf
-grails-app.controllers
+grails-app.controllers.com.piragua.greenmail
 scripts
-test.unit
