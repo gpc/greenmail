@@ -1,10 +1,12 @@
-package com.piragua.greenmail.controller
+package com.piragua.greenmail
 
 import com.icegreen.greenmail.util.GreenMailUtil
 
-public class GreenmailController {
+class GreenmailController {
 
     def greenMail
+
+	def index = {redirect action:'list'}
 
     def list = {
         return [list:greenMail.getReceivedMessages().sort({it.sentDate}).reverse() ]        

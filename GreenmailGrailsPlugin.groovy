@@ -3,7 +3,7 @@ import com.icegreen.greenmail.util.ServerSetupTest
 
 class GreenmailGrailsPlugin {
     // the plugin version
-    def version = "1.0.1"
+    def version = "1.1"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.1.1 > *"
     // the other plugins this plugin depends on
@@ -16,7 +16,6 @@ class GreenmailGrailsPlugin {
 	def environments = ['dev', 'test']
 	def scopes = [excludes:'war']
 
-    // TODO Fill in these fields
     def author = "Mike Hugo"
     def authorEmail = "mike@piragua.com"
     def title = "Greenmail Plugin for Grails"
@@ -24,8 +23,7 @@ class GreenmailGrailsPlugin {
 Provides a wrapper around GreenMail (http://www.icegreen.com/greenmail/) and provides a view that displays 'sent' messages
 '''
 
-    // URL to the plugin's documentation
-    def documentation = "http://grails.org/Greenmail+Plugin"
+    def documentation = "http://grails.org/plugin/greenmail"
 
     def doWithSpring = {
 		greenMail(GreenMail){
@@ -52,7 +50,7 @@ Provides a wrapper around GreenMail (http://www.icegreen.com/greenmail/) and pro
     }
 
     def onChange = { event ->
-        // TODO Implement code that is executed when any artefact that this plugin is
+	    // TODO Implement code that is executed when any artefact that this plugin is
         // watching is modified and reloaded. The event contains: event.source,
         // event.application, event.manager, event.ctx, and event.plugin.
     }
@@ -61,4 +59,5 @@ Provides a wrapper around GreenMail (http://www.icegreen.com/greenmail/) and pro
         // TODO Implement code that is executed when the project configuration changes.
         // The event is the same as for 'onChange'.
     }
+	
 }
