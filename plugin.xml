@@ -1,4 +1,4 @@
-<plugin name='greenmail' version='1.1' grailsVersion='1.1.1 &gt; *'>
+<plugin name='greenmail' version='1.2-SNAPSHOT' grailsVersion='1.1.1 &gt; *'>
   <author>Mike Hugo</author>
   <authorEmail>mike@piragua.com</authorEmail>
   <title>Greenmail Plugin for Grails</title>
@@ -8,8 +8,12 @@ Provides a wrapper around GreenMail (http://www.icegreen.com/greenmail/) and pro
   <documentation>http://grails.org/plugin/greenmail</documentation>
   <resources>
     <resource>com.piragua.greenmail.GreenmailBootStrap</resource>
-    <resource>UrlMappings</resource>
     <resource>com.piragua.greenmail.GreenmailController</resource>
   </resources>
-  <dependencies />
+  <dependencies>
+    <resolvers>
+      <resolver type='grailsPlugins' name='grailsPlugins' />
+    </resolvers>
+  </dependencies>
+  <behavior />
 </plugin>

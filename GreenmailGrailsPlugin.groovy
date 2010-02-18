@@ -1,5 +1,6 @@
 import com.icegreen.greenmail.util.GreenMail
 import com.icegreen.greenmail.util.ServerSetupTest
+import com.icegreen.greenmail.util.ServerSetup
 
 class GreenmailGrailsPlugin {
     // the plugin version
@@ -26,18 +27,14 @@ Provides a wrapper around GreenMail (http://www.icegreen.com/greenmail/) and pro
     def documentation = "http://grails.org/plugin/greenmail"
 
     def doWithSpring = {
-		greenMail(GreenMail){
-			constructorArg(ServerSetupTest.SMTP)
+		greenMail(GreenMail, [ServerSetupTest.SMTP] as ServerSetup[]) {
+			it.initMethod = 'start'
+			it.destroyMethod = 'stop'
 		}
         // TODO Implement runtime spring config (optional)
     }
 
     def doWithApplicationContext = { applicationContext ->
-		try {
-			applicationContext.getBean('greenMail').start()
-		} catch (Exception e) {
-			log.error 'unable to start greenmail!'
-		}
         // TODO Implement post initialization spring config (optional)
     }
 
