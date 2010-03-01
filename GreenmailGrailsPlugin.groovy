@@ -14,7 +14,6 @@ class GreenmailGrailsPlugin {
             "grails-app/views/error.gsp"
     ]
 
-	def environments = ['dev', 'test']
 	def scopes = [excludes:'war']
 
     def author = "Mike Hugo"
