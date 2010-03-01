@@ -5,4 +5,5 @@ scripts
 test.projects.mailer.grails-app.conf
 test.projects.mailer.grails-app.conf.spring
 test.projects.mailer.grails-app.controllers.com.piragua.mailer
+test.projects.mailer.target.test-classes.spring
 test.projects.mailer.test.integration.com.piragua
