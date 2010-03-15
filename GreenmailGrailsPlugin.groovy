@@ -1,10 +1,10 @@
-import com.icegreen.greenmail.util.GreenMail
+import grails.plugin.greenmail.GreenMail
 import com.icegreen.greenmail.util.ServerSetupTest
 import com.icegreen.greenmail.util.ServerSetup
 
 class GreenmailGrailsPlugin {
     // the plugin version
-    def version = "1.2"
+    def version = "1.2.1"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.1.1 > *"
     // the other plugins this plugin depends on
