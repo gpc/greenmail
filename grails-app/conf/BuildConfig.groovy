@@ -9,5 +9,6 @@ grails.project.dependency.resolution = {
 
 	dependencies {
 		build 'com.icegreen:greenmail:1.3'
+		build 'javax.mail:mail:1.4.1'
 	}
 }

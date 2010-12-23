@@ -1,4 +1,4 @@
-<plugin name='greenmail' version='1.2.1' grailsVersion='1.1.1 &gt; *'>
+<plugin name='greenmail' version='1.2.2' grailsVersion='1.1.1 &gt; *'>
   <author>Mike Hugo</author>
   <authorEmail>mike@piragua.com</authorEmail>
   <title>Greenmail Plugin for Grails</title>
@@ -16,6 +16,7 @@ Provides a wrapper around GreenMail (http://www.icegreen.com/greenmail/) and pro
       <resolver type='mavenCentral' />
     </resolvers>
     <dependency group='com.icegreen' name='greenmail' version='1.3' conf='build' transitive='true' />
+    <dependency group='javax.mail' name='mail' version='1.4.1' conf='build' transitive='true' />
   </dependencies>
   <behavior />
 </plugin>

@@ -4,7 +4,7 @@ import com.icegreen.greenmail.util.ServerSetup
 
 class GreenmailGrailsPlugin {
     // the plugin version
-    def version = "1.2.1"
+    def version = "1.2.2"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.1.1 > *"
     // the other plugins this plugin depends on
@@ -26,7 +26,10 @@ Provides a wrapper around GreenMail (http://www.icegreen.com/greenmail/) and pro
     def documentation = "http://grails.org/plugin/greenmail"
 
     def doWithSpring = {
-		greenMail(GreenMail, [ServerSetupTest.SMTP] as ServerSetup[]) {
+		def smtpPort = application.config.greenmail.ports.smtp ?: ServerSetupTest.SMTP.port
+		def smtp = new ServerSetup(smtpPort, null, "smtp")
+	
+		greenMail(GreenMail, [smtp] as ServerSetup[]) {
 			it.initMethod = 'start'
 			it.destroyMethod = 'stop'
 		}
