@@ -13,24 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-grails.project.dependency.resolution = {
-	inherits "global" // inherit Grails' default dependencies
-	log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
 
-	repositories {
-		grailsHome()
-		grailsCentral()
-		mavenCentral()
-	}
+import spock.lang.*
+import grails.plugin.spock.*
 
-	dependencies {
-		build 'com.icegreen:greenmail:1.3'
-		build 'javax.mail:mail:1.4.1'
-	}
+import javax.mail.Message.RecipientType
+
+class SendAndRetrieveSpec extends IntegrationSpec {
+
+	def mailService
+	def greenMail
 	
-	plugins {
-		test (":spock:0.5-groovy-1.7", ":mail:1.0-SNAPSHOT") {
-			export = false
+	def "send mail and retrieve via greenmail"() {
+		when:
+		mailService.sendMail {
+			to "tester@test.com"
+			from "grails@grails.org"
+			subject "test"
+			text "This is a test"
 		}
+		
+		then:
+		greenMail.latestMessage.getRecipients(RecipientType.TO)*.toString()[0] == "tester@test.com"
 	}
 }
