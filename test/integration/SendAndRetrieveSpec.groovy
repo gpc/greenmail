@@ -17,8 +17,6 @@
 import spock.lang.*
 import grails.plugin.spock.*
 
-import javax.mail.Message.RecipientType
-
 class SendAndRetrieveSpec extends IntegrationSpec {
 
 	def mailService
@@ -34,6 +32,6 @@ class SendAndRetrieveSpec extends IntegrationSpec {
 		}
 		
 		then:
-		greenMail.latestMessage.getRecipients(RecipientType.TO)*.toString()[0] == "tester@test.com"
+		greenMail.latestMessage.to == "tester@test.com"
 	}
 }

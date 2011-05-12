@@ -17,6 +17,9 @@ import grails.plugin.greenmail.GreenMail
 import com.icegreen.greenmail.util.ServerSetupTest
 import com.icegreen.greenmail.util.ServerSetup
 
+import javax.mail.internet.MimeMessage
+import javax.mail.Message.RecipientType
+
 class GreenmailGrailsPlugin {
 
 	def title = "Greenmail Plugin for Grails"
@@ -43,6 +46,17 @@ class GreenmailGrailsPlugin {
 		greenMail(GreenMail, [smtp] as ServerSetup[]) {
 			it.initMethod = 'start'
 			it.destroyMethod = 'stop'
+		}
+	}
+	
+	def doWithDynamicMethods = {
+		MimeMessage.metaClass {
+			getTo { -> delegate.tos[0] }
+			getTos { -> delegate.getRecipients(RecipientType.TO)*.toString() }
+			getCc { -> delegate.ccs[0] }
+			getCcs { -> delegate.getRecipients(RecipientType.CC)*.toString() }
+			getBcc { -> delegate.bccs[0] }
+			getBccs { -> delegate.getRecipients(RecipientType.BCC)*.toString() }
 		}
 	}
 
