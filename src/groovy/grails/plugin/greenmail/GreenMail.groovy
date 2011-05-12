@@ -19,6 +19,8 @@ import com.icegreen.greenmail.imap.ImapHostManagerImpl
 import com.icegreen.greenmail.util.ServerSetup
 import com.icegreen.greenmail.util.ServerSetupTest
 
+import javax.mail.internet.MimeMessage
+
 /**
  * GreenMail provides no easy way to delete all messages, this class
  * provides deleteAllMessages() which does that.
@@ -44,5 +46,31 @@ class GreenMail extends com.icegreen.greenmail.util.GreenMail {
 	
 	void deleteAllMessages() {
 		managers.imapHostManager.store.listMailboxes('*')*.deleteAllMessages()
+	}
+	
+	int getMessagesCount() {
+		getMessages().size()
+	}
+	
+	Collection<MimeMessage> getMessages() {
+		getReceivedMessages().toList()
+	}
+	
+	MimeMessage getMessage(int index) {
+		def messages = getMessages()
+		if (index < messages.size()) {
+			messages[index]
+		} else {
+			null
+		}
+	}
+	
+	MimeMessage getLatestMessage() {
+		def messages = getMessages()
+		if (messages) {
+			messages.last()
+		} else {
+			null
+		}
 	}
 }
