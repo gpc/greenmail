@@ -29,10 +29,13 @@ grails.project.dependency.resolution = {
 	}
 	
 	plugins {
+		compile(":tomcat:$grailsVersion", ":hibernate:$grailsVersion") {
+			export = false
+		}
 		test (":spock:0.6-SNAPSHOT", ":mail:1.0-SNAPSHOT") {
 			export = false
 		}
-		build(":release:1.0.0") {
+		build(":release:1.0.0", ":svn:1.0.1") {
 			export = false
 		}
 	}
