@@ -32,7 +32,11 @@ grails.project.dependency.resolution = {
 		test (":spock:0.6-SNAPSHOT", ":mail:1.0-SNAPSHOT") {
 			export = false
 		}
+		build(":release:1.0.0") {
+			export = false
+		}
 	}
 }
 
+grails.release.scm.enabled = false
 grails.project.work.dir = "target"
