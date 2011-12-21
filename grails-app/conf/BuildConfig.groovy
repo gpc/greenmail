@@ -29,8 +29,10 @@ grails.project.dependency.resolution = {
 	}
 	
 	plugins {
-		test (":spock:0.5-groovy-1.7", ":mail:1.0-SNAPSHOT") {
+		test (":spock:0.6-SNAPSHOT", ":mail:1.0-SNAPSHOT") {
 			export = false
 		}
 	}
 }
+
+grails.project.work.dir = "target"
