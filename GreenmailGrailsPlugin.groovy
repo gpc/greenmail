@@ -36,8 +36,6 @@ class GreenmailGrailsPlugin {
 	def pluginExcludes = [
 		"grails-app/views/error.gsp"
 	]
-
-	def scopes = [excludes: 'war']
 	
 	def doWithSpring = {
 		def smtpPort = application.config.greenmail.ports.smtp ?: ServerSetupTest.SMTP.port
