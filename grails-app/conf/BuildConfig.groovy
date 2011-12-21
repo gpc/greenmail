@@ -24,19 +24,21 @@ grails.project.dependency.resolution = {
 	}
 
 	dependencies {
-		build 'com.icegreen:greenmail:1.3'
-		build 'javax.mail:mail:1.4.1'
+		compile 'com.icegreen:greenmail:1.3'
+		runtime 'javax.mail:mail:1.4.1'
 	}
 	
 	plugins {
-		compile(":tomcat:$grailsVersion", ":hibernate:$grailsVersion") {
-			export = false
-		}
-		test (":spock:0.6-SNAPSHOT", ":mail:1.0-SNAPSHOT") {
-			export = false
-		}
-		build(":release:1.0.0", ":svn:1.0.1") {
-			export = false
+		if (appName == "greenmail") {
+			compile(":tomcat:$grailsVersion", ":hibernate:$grailsVersion") {
+				export = false
+			}
+			test (":spock:0.6-SNAPSHOT", ":mail:1.0-SNAPSHOT") {
+				export = false
+			}
+			build(":release:1.0.0", ":svn:1.0.1") {
+				export = false
+			}
 		}
 	}
 }
