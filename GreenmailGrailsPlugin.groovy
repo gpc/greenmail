@@ -30,8 +30,8 @@ class GreenmailGrailsPlugin {
 	def grailsVersion = "1.1.1 > *"
 	def dependsOn = [:]
 
-	def author = "Mike Hugo"
-	def authorEmail = "mike@piragua.com"
+	def author = "Grails Plugin Collective"
+	def authorEmail = "grails-plugin-collective@gmail.com"
 
 	def pluginExcludes = [
 		"grails-app/views/error.gsp"
