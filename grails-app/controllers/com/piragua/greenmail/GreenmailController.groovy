@@ -26,6 +26,9 @@ class GreenmailController {
 
     def list = {
         withFormat {
+            html {
+                return [list: greenMail.getReceivedMessages().sort({it.sentDate}).reverse()]
+            }
             js {
                 List jsonMessages = []
                 List messages = greenMail.getReceivedMessages().sort({it.sentDate}).reverse()
@@ -34,9 +37,6 @@ class GreenmailController {
                 }
                 render jsonMessages as JSON
             }
-            html {
-                return [list: greenMail.getReceivedMessages().sort({it.sentDate}).reverse()]
-            }
         }
     }
 
@@ -44,11 +44,11 @@ class GreenmailController {
         def messages = Arrays.asList(greenMail.getReceivedMessages().sort({it.sentDate}).reverse())
         def specificMessage = messages[Integer.valueOf(params.id).intValue()]
         withFormat {
-            js {
-                render createMessageMap(specificMessage, params.id) as JSON
-            }
             html {
                 render "<pre>${GreenMailUtil.getWholeMessage(specificMessage)}</pre>"
+            }
+            js {
+                render createMessageMap(specificMessage, params.id) as JSON
             }
         }
     }
