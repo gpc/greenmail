@@ -36,7 +36,7 @@ grails.project.dependency.resolution = {
 			test (":spock:0.6-SNAPSHOT", ":mail:1.0") {
 				export = false
 			}
-			build(":release:1.0.0", ":svn:1.0.1") {
+			build(":release:1.0.1", ":svn:1.0.2") {
 				export = false
 			}
 		}
