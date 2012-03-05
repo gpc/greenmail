@@ -15,7 +15,6 @@
 -->
 <%@ page import="com.icegreen.greenmail.util.GreenMailUtil" %>
 <head>
-	<!--<meta name="layout" content="main" />-->
 	<title>Email List</title>
 
     <style type="text/css">
