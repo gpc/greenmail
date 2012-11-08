@@ -65,9 +65,7 @@ class GreenmailController {
     }
 
     def clear = {
-        greenMail.stop()
-        greenMail.start()
+        greenMail.deleteAllMessages()
         render 'Email messages have been cleared'
     }
-
 }
