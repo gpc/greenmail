@@ -29,16 +29,14 @@ grails.project.dependency.resolution = {
 	}
 	
 	plugins {
-		if (appName == "greenmail") {
-			compile(":tomcat:$grailsVersion", ":hibernate:$grailsVersion") {
-				export = false
-			}
-			test (":spock:0.6-SNAPSHOT", ":mail:1.0") {
-				export = false
-			}
-			build(":release:1.0.1", ":svn:1.0.2") {
-				export = false
-			}
+		compile(":tomcat:$grailsVersion", ":hibernate:$grailsVersion") {
+			export = false
+		}
+		test (":spock:0.7", ":mail:1.0") {
+			export = false
+		}
+		build(":release:2.0.4") {
+			export = false
 		}
 	}
 }
