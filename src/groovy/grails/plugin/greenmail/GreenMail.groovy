@@ -44,6 +44,10 @@ class GreenMail extends com.icegreen.greenmail.util.GreenMail {
 		super.start()
 	}
 	
+	synchronized void stop() {
+		services.each { Service service -> service.stopService(stopTimeout) }
+	}
+	
 	void deleteAllMessages() {
 		managers.imapHostManager.store.listMailboxes('*')*.deleteAllMessages()
 	}
