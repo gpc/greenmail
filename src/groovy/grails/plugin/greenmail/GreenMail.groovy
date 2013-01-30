@@ -18,6 +18,7 @@ package grails.plugin.greenmail
 import com.icegreen.greenmail.imap.ImapHostManagerImpl
 import com.icegreen.greenmail.util.ServerSetup
 import com.icegreen.greenmail.util.ServerSetupTest
+import com.icegreen.greenmail.util.Service
 
 import javax.mail.internet.MimeMessage
 
