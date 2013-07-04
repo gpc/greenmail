@@ -40,7 +40,8 @@ class GreenMail extends com.icegreen.greenmail.util.GreenMail {
 		super(config)
 	}
 
-	void start() {
+    @Override
+	synchronized void start() {
 		ImapHostManagerImpl.getDeclaredField('store').accessible = true
 		super.start()
 	}
