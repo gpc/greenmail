@@ -39,14 +39,10 @@ class GreenMail extends com.icegreen.greenmail.util.GreenMail {
 	GreenMail(ServerSetup[] config) {
 		super(config)
 	}
-	
+
 	void start() {
 		ImapHostManagerImpl.getDeclaredField('store').accessible = true
 		super.start()
-	}
-	
-	synchronized void stop() {
-		services.each { Service service -> service.stopService(stopTimeout) }
 	}
 	
 	void deleteAllMessages() {
