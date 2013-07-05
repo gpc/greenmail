@@ -42,9 +42,9 @@ class GreenmailGrailsPlugin {
 			def smtpPort = application.config.greenmail.ports.smtp ?: ServerSetupTest.SMTP.port
 			def smtp = new ServerSetup(smtpPort, null, "smtp")
 
-			greenMail(GreenMail, [smtp] as ServerSetup[]) {
-				it.initMethod = 'start'
-				it.destroyMethod = 'stop'
+			greenMail(GreenMail, [smtp] as ServerSetup[]) { bean ->
+				bean.initMethod = 'start'
+				bean.destroyMethod = 'stop'
 			}
 		}
 	}
