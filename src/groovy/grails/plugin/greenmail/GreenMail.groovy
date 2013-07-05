@@ -41,38 +41,32 @@ class GreenMail extends com.icegreen.greenmail.util.GreenMail {
 	}
 
     @Override
-	synchronized void start() {
-		ImapHostManagerImpl.getDeclaredField('store').accessible = true
-		super.start()
-	}
-	
-	void deleteAllMessages() {
-		managers.imapHostManager.store.listMailboxes('*')*.deleteAllMessages()
-	}
-	
+    synchronized void start() {
+        ImapHostManagerImpl.getDeclaredField('store').accessible = true
+        super.start()
+    }
+
+    void deleteAllMessages() {
+        ((ImapHostManagerImpl)managers.imapHostManager).store.listMailboxes('*')*.deleteAllMessages()
+    }
+
+    /** @deprecated use direct messages.size */
+    @Deprecated
 	int getMessagesCount() {
 		getMessages().size()
 	}
-	
-	Collection<MimeMessage> getMessages() {
-		getReceivedMessages().toList()
-	}
-	
-	MimeMessage getMessage(int index) {
-		def messages = getMessages()
-		if (index < messages.size()) {
-			messages[index]
-		} else {
-			null
-		}
-	}
-	
-	MimeMessage getLatestMessage() {
-		def messages = getMessages()
-		if (messages) {
-			messages.last()
-		} else {
-			null
-		}
-	}
+
+    Collection<MimeMessage> getMessages() {
+        getReceivedMessages().toList()
+    }
+
+    MimeMessage getMessage(int index) {
+        def messages = getMessages()
+        return index < messages.size() ? messages[index] : null
+    }
+
+    MimeMessage getLatestMessage() {
+        def messages = getMessages()
+        return  messages ? messages.last() : null
+    }
 }
