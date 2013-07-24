@@ -14,24 +14,52 @@
  * limitations under the License.
  */
 
-import spock.lang.*
+import grails.plugin.greenmail.GreenMail
 import grails.plugin.spock.*
 
 class SendAndRetrieveSpec extends IntegrationSpec {
 
-	def mailService
-	def greenMail
-	
-	def "send mail and retrieve via greenmail"() {
-		when:
-		mailService.sendMail {
-			to "tester@test.com"
-			from "grails@grails.org"
-			subject "test"
-			text "This is a test"
-		}
-		
-		then:
-		greenMail.latestMessage.to == "tester@test.com"
-	}
+    def mailService
+    GreenMail greenMail
+
+    void setup() {
+        greenMail.deleteAllMessages()
+    }
+
+    void cleanup() {
+        greenMail.deleteAllMessages()
+    }
+
+    def "send mail and retrieve via greenmail"() {
+        when:
+          mailService.sendMail {
+              to "tester@test.com"
+              from "grails@grails.org"
+              subject "test"
+              text "This is a test"
+          }
+        then:
+          greenMail.messagesCount == 1
+          greenMail.messages.size() == 1
+          greenMail.getMessage(0).to == "tester@test.com"
+          greenMail.getMessage(1) == null
+          greenMail.messages[0].to == "tester@test.com"
+          greenMail.latestMessage.to == "tester@test.com"
+          greenMail.messages.last().to == "tester@test.com"
+    }
+
+    def 'cleanup mailbox'() {
+        given:
+          mailService.sendMail {
+              to "tester@test.com"
+              from "grails@grails.org"
+              subject "test"
+              text "This is a test"
+          }
+          assert greenMail.messages.last().to == "tester@test.com"
+        when:
+          greenMail.deleteAllMessages()
+        then:
+          greenMail.messages.isEmpty()
+    }
 }
