@@ -26,7 +26,7 @@ class GreenmailGrailsPlugin {
 	def description = "Provides a wrapper around GreenMail (http://www.icegreen.com/greenmail/) and provides a view that displays 'sent' messages"
 	def documentation = "http://grails.org/plugin/greenmail"
 	
-	def version = "1.3.4"
+	def version = "1.3.5"
 	def grailsVersion = "1.3.0 > *"
 	def dependsOn = [:]
 
@@ -42,10 +42,7 @@ class GreenmailGrailsPlugin {
 			def smtpPort = application.config.greenmail.ports.smtp ?: ServerSetupTest.SMTP.port
 			def smtp = new ServerSetup(smtpPort, null, "smtp")
 
-			greenMail(GreenMail, [smtp] as ServerSetup[]) {
-				it.initMethod = 'start'
-				it.destroyMethod = 'stop'
-			}
+			greenMail(GreenMail, [smtp] as ServerSetup[])
 		}
 	}
 	

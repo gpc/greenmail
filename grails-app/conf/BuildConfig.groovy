@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+grails.project.dependency.resolver = "maven"
 grails.project.dependency.resolution = {
 	inherits "global"
 	log "warn"
+	checksums true
+	legacyResolve false
 
 	repositories {
+		grailsPlugins()
 		grailsHome()
 		grailsCentral()
 		mavenCentral()
@@ -29,13 +33,13 @@ grails.project.dependency.resolution = {
 	}
 	
 	plugins {
-		compile(":tomcat:$grailsVersion", ":hibernate:$grailsVersion") {
+		compile(":tomcat:7.0.54") {
 			export = false
 		}
-		test (":spock:0.7", ":mail:1.0") {
+		test (":mail:1.0.7") {
 			export = false
 		}
-		build(":release:2.0.4") {
+		build ':release:3.0.1', ':rest-client-builder:2.0.3', {
 			export = false
 		}
 	}
