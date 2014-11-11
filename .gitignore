@@ -6,3 +6,4 @@ target
 web-app
 .idea
 *.iml
+*.sha1
