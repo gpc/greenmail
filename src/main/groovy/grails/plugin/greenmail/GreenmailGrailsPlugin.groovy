@@ -13,43 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import grails.plugin.greenmail.GreenMail
+package grails.plugin.greenmail
+
 import com.icegreen.greenmail.util.ServerSetupTest
 import com.icegreen.greenmail.util.ServerSetup
+import grails.plugins.Plugin
 
 import javax.mail.internet.MimeMessage
 import javax.mail.Message.RecipientType
 
-class GreenmailGrailsPlugin {
+class GreenmailGrailsPlugin extends Plugin {
+
+	// the version or versions of Grails the plugin is designed for
+	def grailsVersion = "3.0.0 > *"
+	// resources that are excluded from plugin packaging
+	def pluginExcludes = [
+			"grails-app/views/error.gsp"
+	]
 
 	def title = "Greenmail Plugin for Grails"
-	def description = "Provides a wrapper around GreenMail (http://www.icegreen.com/greenmail/) and provides a view that displays 'sent' messages"
-	def documentation = "http://grails.org/plugin/greenmail"
-	
-	def version = "1.3.4"
-	def grailsVersion = "1.3.0 > *"
-	def dependsOn = [:]
-
 	def author = "Grails Plugin Collective"
 	def authorEmail = "grails-plugin-collective@gmail.com"
+	def description = "Provides a wrapper around GreenMail (http://www.icegreen.com/greenmail/) and provides a view that displays 'sent' messages"
+	def documentation = "http://grails.org/plugin/greenmail"
 
-	def pluginExcludes = [
-		"grails-app/views/error.gsp"
-	]
-	
-	def doWithSpring = {
-		if (!application.config.greenmail.disabled){
-			def smtpPort = application.config.greenmail.ports.smtp ?: ServerSetupTest.SMTP.port
-			def smtp = new ServerSetup(smtpPort, null, "smtp")
+	def profiles = ['web']
 
-			greenMail(GreenMail, [smtp] as ServerSetup[]) {
-				it.initMethod = 'start'
-				it.destroyMethod = 'stop'
+	@Override
+	Closure doWithSpring() { {->
+			if (!config.get("grails.plugin.greenmail.disabled")){
+				int smtpPort = config.get("grails.plugin.greenmail.ports.smtp") ?: ServerSetupTest.SMTP.port
+				ServerSetup smtp = new ServerSetup(smtpPort, null, "smtp")
+
+				greenMail(GreenMail, [smtp] as ServerSetup[]) {
+					it.initMethod = 'start'
+					it.destroyMethod = 'stop'
+				}
 			}
 		}
 	}
-	
-	def doWithDynamicMethods = {
+
+	@Override
+	void doWithDynamicMethods() {
 		MimeMessage.metaClass {
 			getTo { -> delegate.tos[0] }
 			getTos { -> delegate.getRecipients(RecipientType.TO)*.toString() }
