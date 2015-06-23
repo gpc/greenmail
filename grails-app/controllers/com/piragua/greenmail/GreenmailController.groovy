@@ -16,15 +16,15 @@
 package com.piragua.greenmail
 
 import com.icegreen.greenmail.util.GreenMailUtil
-import grails.converters.*
+import grails.converters.JSON
 
 class GreenmailController {
 
     def greenMail
 
-    def index = {redirect action: 'list'}
+    def index() {redirect action: 'list'}
 
-    def list = {
+    def list() {
         withFormat {
             html {
                 return [list: greenMail.getReceivedMessages().sort({it.sentDate}).reverse()]
@@ -40,7 +40,7 @@ class GreenmailController {
         }
     }
 
-    def show = {
+    def show() {
         def messages = Arrays.asList(greenMail.getReceivedMessages().sort({it.sentDate}).reverse())
         def specificMessage = messages[Integer.valueOf(params.id).intValue()]
         withFormat {
@@ -64,7 +64,7 @@ class GreenmailController {
         return messageMap
     }
 
-    def clear = {
+    def clear() {
         greenMail.deleteAllMessages()
         render 'Email messages have been cleared'
     }
