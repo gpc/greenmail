@@ -41,8 +41,8 @@ class GreenmailGrailsPlugin extends Plugin {
 
 	@Override
 	Closure doWithSpring() { {->
-			if (!config.get("grails.plugin.greenmail.disabled")){
-				int smtpPort = config.get("grails.plugin.greenmail.ports.smtp") ?: ServerSetupTest.SMTP.port
+			if (!config.getProperty("grails.plugin.greenmail.disabled", Boolean, false)){
+				int smtpPort = config.getProperty("grails.plugin.greenmail.ports.smtp", Integer, ServerSetupTest.SMTP.port) 
 				ServerSetup smtp = new ServerSetup(smtpPort, null, "smtp")
 
 				greenMail(GreenMail, [smtp] as ServerSetup[]) {
