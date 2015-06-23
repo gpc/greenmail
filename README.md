@@ -23,7 +23,7 @@ USAGE
 Provides a wrapper around [GreenMail](http://www.icegreen.com/greenmail/) and provides a view that displays 'sent' messages - useful for testing application in the 'development' or 'test' environments.
 
 
-h2. Installation
+### Installation
 
     grails install-plugin greenmail
 
@@ -53,7 +53,7 @@ You can also completely disable the plugin by using the config setting greenmail
 	}
 
 
-h2. Usage in Integration Tests
+### Usage in Integration Tests
 
 The plugin can be used to capture email messages during integration tests.  For example:
 
@@ -88,15 +88,15 @@ The plugin can be used to capture email messages during integration tests.  For 
 	}
 
 
-The plugin adds a @deleteAllMessages()@ convenience method to the @greenMail@ bean that deletes all received messages.
+The plugin adds a `deleteAllMessages()` convenience method to the `greenMail` bean that deletes all received messages.
 
 h2. Usage in running application 
 
-The plugin provides a controller and view to show messages that are 'sent' from the application.  Simply browse to http://localhost:8080/<YOUR_APP>/greenmail and it will show a list of messages sent.  You can click on the "show" link to view the raw message.
+The plugin provides a controller and view to show messages that are 'sent' from the application.  Simply browse to http://localhost:8080//greenmail and it will show a list of messages sent.  You can click on the "show" link to view the raw message.
 
 
 Roadmap:
-This is a fully functional plugin, though there are some features that I think would be worth adding.  Contributions and patches are welcome!  Create a JIRA ticket with a patch or request plugin developer access and make the change directly in the SVN plugin repository (an email to the author is appreciated)
+This is a fully functional plugin, though there are some features that I think would be worth adding.  Contributions and patches are welcome!  
 
 * Messages sent by the Grails Mail plugin have duplicate "TO:" fields in the raw message and in the address list, for instance if the recipient is spam@piragua.com, then that email address is listed twice when you retrieve the address list for RecipientType.TO (e.g. GreenMailUtil.getAddressList(message.getRecipients(javax.mail.Message.RecipientType.TO))
 * Ability to view HTML email messages as they appear in a mail client rather than as RAW message.
