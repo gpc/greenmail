@@ -31,7 +31,7 @@ class MimeMessageExtension {
         instance.getRecipients(Message.RecipientType.TO)*.toString()
     }
 
-    static getCc(MimeMessage instance) {
+    static String getCc(MimeMessage instance) {
         instance.ccs[0]
     }
 
