@@ -15,12 +15,9 @@
  */
 package grails.plugin.greenmail
 
-import com.icegreen.greenmail.util.ServerSetupTest
 import com.icegreen.greenmail.util.ServerSetup
+import com.icegreen.greenmail.util.ServerSetupTest
 import grails.plugins.Plugin
-
-import javax.mail.internet.MimeMessage
-import javax.mail.Message.RecipientType
 
 class GreenmailGrailsPlugin extends Plugin {
 
@@ -51,18 +48,6 @@ class GreenmailGrailsPlugin extends Plugin {
 				}
 			}
 		}
-	}
 
-	@Override
-	void doWithDynamicMethods() {
-		MimeMessage.metaClass {
-			getTo { -> delegate.tos[0] }
-			getTos { -> delegate.getRecipients(RecipientType.TO)*.toString() }
-			getCc { -> delegate.ccs[0] }
-			getCcs { -> delegate.getRecipients(RecipientType.CC)*.toString() }
-			getBcc { -> delegate.bccs[0] }
-			getBccs { -> delegate.getRecipients(RecipientType.BCC)*.toString() }
-		}
 	}
-
 }
