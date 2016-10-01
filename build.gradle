@@ -57,6 +57,7 @@ dependencies {
 }
 
 grailsPublish {
+    userOrg = "grails"
     githubSlug = 'gpc/greenmail'
     license {
         name = 'Apache-2.0'
