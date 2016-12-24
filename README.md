@@ -11,7 +11,7 @@ Add a dependency for the plugin in build.gradle:
 ```
 
 dependencies {    
-    compile 'org.grails.plugins:grails-greenmail:2.0.0'    
+    compile 'org.grails.plugins:greenmail:2.0.0.RC2'    
 }
 
 ```
