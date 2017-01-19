@@ -90,12 +90,12 @@ The plugin can be used to capture email messages during integration tests.  For 
 
 The plugin adds a `deleteAllMessages()` convenience method to the `greenMail` bean that deletes all received messages.
 
-h2. Usage in running application 
+### Usage in running application 
 
-The plugin provides a controller and view to show messages that are 'sent' from the application.  Simply browse to http://localhost:8080//greenmail and it will show a list of messages sent.  You can click on the "show" link to view the raw message.
+The plugin provides a controller and view to show messages that are 'sent' from the application.  Simply browse to http://localhost:8080/greenmail and it will show a list of messages sent.  You can click on the "show" link to view the raw message.
 
 
-Roadmap:
+### Roadmap
 This is a fully functional plugin, though there are some features that I think would be worth adding.  Contributions and patches are welcome!  
 
 * Messages sent by the Grails Mail plugin have duplicate "TO:" fields in the raw message and in the address list, for instance if the recipient is spam@piragua.com, then that email address is listed twice when you retrieve the address list for RecipientType.TO (e.g. GreenMailUtil.getAddressList(message.getRecipients(javax.mail.Message.RecipientType.TO))
