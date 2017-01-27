@@ -6,7 +6,7 @@ This is a fork of grails greenmail plugin for grails 3.
 INSTALL
 -------
 
-Add a dependency for the plugin in build.gradle:
+Add a dependency for the plugin in `build.gradle`:
 
 ```
 
@@ -20,7 +20,7 @@ dependencies {
 USAGE
 -------
 
-Provides a wrapper around [GreenMail](http://www.icegreen.com/greenmail/) and provides a view that displays 'sent' messages - useful for testing application in the 'development' or 'test' environments.
+Provides a wrapper around [GreenMail](http://www.icegreen.com/greenmail/) and provides a view that displays `sent` messages - useful for testing application in the `development` or `test` environments.
 
 
 ### Installation
@@ -28,7 +28,7 @@ Provides a wrapper around [GreenMail](http://www.icegreen.com/greenmail/) and pr
     grails install-plugin greenmail
 
 
-The plugin assumes that you have some sort of Java mail provider installed (for instance the Grails mail plugin).  You need to define a SMTP port for the mock Greenmail SMTP server to start with.  Using the Grails Mail plugin, this is as simple as defining the grails.mail.port property in Config.groovy, like this (see the first line in the 'development' and 'test' blocks):
+The plugin assumes that you have some sort of Java mail provider installed (for instance the Grails mail plugin). You need to define a SMTP port for the mock Greenmail SMTP server to start with. Using the Grails Mail plugin, this is as simple as defining the `grails.mail.port` property in `Config.groovy`, like this (see the first line in the `development` and `test` blocks):
 
 	environments {
 	    production {
@@ -44,7 +44,7 @@ The plugin assumes that you have some sort of Java mail provider installed (for 
 	    }
 	}
 
-You can also completely disable the plugin by using the config setting greenmail.disabled = true.  For example, to disable greenmail in production:
+You can also completely disable the plugin by using the config setting `greenmail.disabled = true`.  For example, to disable greenmail in production:
 
 	environments {
 	    production {
@@ -55,7 +55,7 @@ You can also completely disable the plugin by using the config setting greenmail
 
 ### Usage in Integration Tests
 
-The plugin can be used to capture email messages during integration tests.  For example:
+The plugin can be used to capture email messages during integration tests. For example:
 
 	import com.icegreen.greenmail.util.*
 
@@ -92,7 +92,7 @@ The plugin adds a `deleteAllMessages()` convenience method to the `greenMail` be
 
 ### Usage in running application 
 
-The plugin provides a controller and view to show messages that are 'sent' from the application.  Simply browse to http://localhost:8080/greenmail and it will show a list of messages sent.  You can click on the "show" link to view the raw message.
+The plugin provides a controller and view to show messages that are `sent` from the application.  Simply browse to http://localhost:8080/greenmail and it will show a list of messages sent.  You can click on the `show` link to view the raw message.
 
 
 ### Roadmap
