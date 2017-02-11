@@ -37,17 +37,19 @@ class GreenmailGrailsPlugin extends Plugin {
 	def profiles = ['web']
 
 	@Override
-	Closure doWithSpring() { {->
-			if (!config.getProperty("grails.plugin.greenmail.disabled", Boolean, false)){
-				int smtpPort = config.getProperty("grails.plugin.greenmail.ports.smtp", Integer, ServerSetupTest.SMTP.port) 
-				ServerSetup smtp = new ServerSetup(smtpPort, null, "smtp")
+	Closure doWithSpring() {
+        { ->
+            if (!config.getProperty("grails.plugin.greenmail.disabled", Boolean, false)) {
+                int smtpPort = config.getProperty("grails.plugin.greenmail.ports.smtp", Integer, ServerSetupTest.SMTP.port)
+                ServerSetup smtp = new ServerSetup(smtpPort, null, "smtp")
+                Long startupTimeout = config.getProperty("grails.plugin.greenmail.serverStartupTimeout", Long, 1000L)
+                smtp.serverStartupTimeout = startupTimeout
 
-				greenMail(GreenMail, [smtp] as ServerSetup[]) {
-					it.initMethod = 'start'
-					it.destroyMethod = 'stop'
-				}
+                greenMail(GreenMail, [smtp] as ServerSetup[]) {
+                    it.initMethod = 'start'
+                    it.destroyMethod = 'stop'
+                }
 			}
 		}
-
 	}
 }
