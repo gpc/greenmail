@@ -44,14 +44,16 @@ The plugin assumes that you have some sort of Java mail provider installed (for 
 	    }
 	}
 
-You can also completely disable the plugin by using the config setting `greenmail.disabled = true`.  For example, to disable greenmail in production:
+You can also completely disable the plugin by using the config setting `grails.plugin.greenmail.disabled = true`.  For example, to disable greenmail in production:
 
 	environments {
 	    production {
-	       greenmail.disabled=true
+	       grails.plugin.greenmail.disabled = true
 	    }
 	}
 
+If you are experiencing timeouts when the application is starting greenmail you can increase this setting (in ms) from 
+the config as follows: `grails.plugin.greenmail.serverStartupTimeout = 2000`
 
 ### Usage in Integration Tests
 

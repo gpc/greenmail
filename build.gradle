@@ -11,7 +11,7 @@ buildscript {
     }
 }
 
-version "2.0.0.RC3"
+version "2.0.1"
 group "org.grails.plugins"
 
 apply plugin:"eclipse"
@@ -24,9 +24,6 @@ ext {
     grailsVersion = project.grailsVersion
     gradleWrapperVersion = project.gradleWrapperVersion
 }
-
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
 
 repositories {
     mavenLocal()
