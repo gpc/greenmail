@@ -44,13 +44,22 @@ The plugin assumes that you have some sort of Java mail provider installed (for 
 	    }
 	}
 
-You can also completely disable the plugin by using the config setting `greenmail.disabled = true`.  For example, to disable greenmail in production:
+You can also completely disable the plugin by using the config setting `grails.plugin.greenmail.disabled = true`.  For example, to disable greenmail in production:
 
 	environments {
 	    production {
-	       greenmail.disabled=true
+	       grails.plugin.greenmail.disabled=true
 	    }
 	}
+
+If you need to change the default listening port (1025) you can use the `grails.plugin.greenmail.ports.smtp` configuration variable. For example: 
+
+	environments {
+	    test {
+	       grails.plugin.greenmail.ports.smtp = 2025
+	    }
+	}
+
 
 
 ### Usage in Integration Tests
