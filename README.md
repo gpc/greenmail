@@ -44,11 +44,11 @@ The plugin assumes that you have some sort of Java mail provider installed (for 
 	    }
 	}
 
-You can also completely disable the plugin by using the config setting `greenmail.disabled = true`.  For example, to disable greenmail in production:
+You can also completely disable the plugin by using the config setting `grails.plugin.greenmail.disabled = true`.  For example, to disable greenmail in production:
 
 	environments {
 	    production {
-	       greenmail.disabled=true
+	       grails.plugin.greenmail.disabled=true
 	    }
 	}
 
