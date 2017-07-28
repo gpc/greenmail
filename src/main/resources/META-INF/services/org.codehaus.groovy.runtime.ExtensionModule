@@ -1,0 +1,3 @@
+moduleName=grails-mime-message-extension-module
+moduleVersion=1.0
+extensionClasses=org.grails.plugin.greenmail.MimeMessageExtension

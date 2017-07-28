@@ -4,6 +4,7 @@ plugin.xml
 stacktrace.log
 target
 web-app
+build/*
 .idea
 *.iml
-*.sha1
+.gradle
