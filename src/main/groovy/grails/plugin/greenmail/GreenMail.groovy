@@ -19,6 +19,8 @@ import com.icegreen.greenmail.imap.ImapHostManagerImpl
 import com.icegreen.greenmail.util.ServerSetup
 import com.icegreen.greenmail.util.Service
 
+import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
 import javax.mail.internet.MimeMessage
 
 /**
@@ -38,14 +40,18 @@ class GreenMail extends com.icegreen.greenmail.util.GreenMail {
 	GreenMail(ServerSetup[] config) {
 		super(config)
 	}
-	
+
+	@PostConstruct
 	void start() {
 		ImapHostManagerImpl.getDeclaredField('store').accessible = true
 		super.start()
 	}
-	
+
+	@PreDestroy
 	synchronized void stop() {
-		services.each { Service service -> service.stopService(stopTimeout) }
+		super.stop()
+		Long stopTimeout = 5000L
+		services.values().each { Service service -> service.stopService(stopTimeout) }
 	}
 	
 	void deleteAllMessages() {
