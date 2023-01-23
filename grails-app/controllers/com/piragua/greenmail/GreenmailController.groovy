@@ -16,7 +16,8 @@
 package com.piragua.greenmail
 
 import com.icegreen.greenmail.util.GreenMailUtil
-import grails.converters.JSON
+import grails.web.mime.MimeType
+import groovy.json.JsonBuilder
 
 class GreenmailController {
 
@@ -35,7 +36,7 @@ class GreenmailController {
                 messages.eachWithIndex {message, index ->
                     jsonMessages << createMessageMap(message, index)
                 }
-                render jsonMessages as JSON
+                render(contentType: MimeType.JSON.name, text: new JsonBuilder(jsonMessages).toString())
             }
         }
     }
@@ -45,10 +46,10 @@ class GreenmailController {
         def specificMessage = messages[Integer.valueOf(params.id).intValue()]
         withFormat {
             html {
-                render "<pre>${GreenMailUtil.getWholeMessage(specificMessage)}</pre>"
+                render(contentType: MimeType.HTML.name) { pre(GreenMailUtil.getWholeMessage(specificMessage)) }
             }
             js {
-                render createMessageMap(specificMessage, params.id) as JSON
+                render(contentType: MimeType.JSON.name, text: new JsonBuilder(createMessageMap(specificMessage, params.id)).toString())
             }
         }
     }
@@ -66,6 +67,6 @@ class GreenmailController {
 
     def clear() {
         greenMail.deleteAllMessages()
-        render 'Email messages have been cleared'
+        render(contentType: MimeType.HTML.name) { div('Email messages have been cleared') }
     }
 }

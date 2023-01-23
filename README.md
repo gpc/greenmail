@@ -1,7 +1,7 @@
-Greenmail Plugin for Grails 3
+Greenmail Plugin for Grails 5
 =============================
 
-This is a fork of grails greenmail plugin for grails 3.
+This is a fork of grails greenmail plugin for grails 5.
 
 INSTALL
 -------
@@ -10,8 +10,8 @@ Add a dependency for the plugin in `build.gradle`:
 
 ```
 
-dependencies {    
-    compile 'org.grails.plugins:greenmail:2.0.0.RC2'    
+dependencies {
+    compile 'org.grails.plugins:greenmail:2.1.0.RC1'
 }
 
 ```
