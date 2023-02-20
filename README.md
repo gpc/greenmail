@@ -1,7 +1,7 @@
-Greenmail Plugin for Grails 3
+Greenmail Plugin for Grails 4
 =============================
 
-This is a fork of grails greenmail plugin for grails 3.
+This is a fork of grails greenmail plugin for grails 4.
 
 INSTALL
 -------
