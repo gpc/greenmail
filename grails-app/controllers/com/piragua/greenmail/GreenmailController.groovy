@@ -45,7 +45,11 @@ class GreenmailController {
         def specificMessage = messages[Integer.valueOf(params.id).intValue()]
         withFormat {
             html {
-                render "<pre>${GreenMailUtil.getWholeMessage(specificMessage)}</pre>"
+                def header
+                specificMessage.getAllHeaders().each() {
+                    header += it.getName() + ': ' + it.getValue() + '<br/>'
+                }
+                render  header + specificMessage.getContent()
             }
             js {
                 render createMessageMap(specificMessage, params.id) as JSON

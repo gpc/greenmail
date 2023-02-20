@@ -3,23 +3,36 @@ grails:
     profile: web-plugin
     codegen:
         defaultPackage: greenmail
-    spring:
-        transactionManagement:
-            proxies: false
+    gorm:
+        reactor:
+            # Whether to translate GORM events into Reactor events
+            # Disabled by default for performance reasons
+            events: false
 info:
     app:
         name: '@info.app.name@'
         version: '@info.app.version@'
         grailsVersion: '@info.app.grailsVersion@'
 spring:
+    jmx:
+        unique-names: true
+    main:
+        banner-mode: "off"
     groovy:
         template:
             check-template-location: false
-# Spring Actuator Endpoints are Disabled by Default
-endpoints:
-    enabled: false
-    jmx:
-        enabled: true
+    devtools:
+        restart:
+            additional-exclude:
+                - '*.gsp'
+                - '**/*.gsp'
+                - '*.gson'
+                - '**/*.gson'
+                - 'logback.groovy'
+                - '*.properties'
+management:
+    endpoints:
+        enabled-by-default: false
 
 ---
 grails:
@@ -39,22 +52,22 @@ grails:
             csv: text/csv
             form: application/x-www-form-urlencoded
             html:
-              - text/html
-              - application/xhtml+xml
+                - text/html
+                - application/xhtml+xml
             js: text/javascript
             json:
-              - application/json
-              - text/json
+                - application/json
+                - text/json
             multipartForm: multipart/form-data
             pdf: application/pdf
             rss: application/rss+xml
             text: text/plain
             hal:
-              - application/hal+json
-              - application/hal+xml
+                - application/hal+json
+                - application/hal+xml
             xml:
-              - text/xml
-              - application/xml
+                - text/xml
+                - application/xml
     urlmapping:
         cache:
             maxsize: 1000
@@ -70,15 +83,10 @@ grails:
             htmlcodec: xml
             codecs:
                 expression: html
-                scriptlets: html
+                scriptlet: html
                 taglib: none
                 staticparts: none
-    mail:
-        port: 1025
-    plugin:
-        greenmail:
-            ports:
-                smtp: 1025
-endpoints:
-    jmx:
-        unique-names: true
+management:
+    endpoints:
+        jmx:
+            unique-names: true
