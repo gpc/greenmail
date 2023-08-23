@@ -15,68 +15,56 @@
  */
 package grails.plugin.greenmail
 
-import com.icegreen.greenmail.imap.ImapHostManagerImpl
-import com.icegreen.greenmail.util.ServerSetup
-import com.icegreen.greenmail.util.Service
+import groovy.transform.CompileStatic
+import groovy.transform.InheritConstructors
 
 import javax.mail.internet.MimeMessage
 
 /**
- * GreenMail provides no easy way to delete all messages, this class
- * provides deleteAllMessages() which does that.
+ * This class provides convenience methods added to the original GreenMail class
  */
+@InheritConstructors
+@CompileStatic
 class GreenMail extends com.icegreen.greenmail.util.GreenMail {
 
-	GreenMail() {
-		super()
-	}
+    /**
+     * GreenMail supports removing all messages, but by a different method
+     */
+    void deleteAllMessages() {
+        super.purgeEmailFromAllMailboxes()
+    }
 
-	GreenMail(ServerSetup config) {
-		super(config)
-	}
+    /**
+     * Counts messages
+     * @return message count
+     */
+    int getMessagesCount() {
+        messages.size()
+    }
 
-	GreenMail(ServerSetup[] config) {
-		super(config)
-	}
+    /**
+     * Get list of messages (instead of Array)
+     * @return list
+     */
+    Collection<MimeMessage> getMessages() {
+        receivedMessages as List<MimeMessage>
+    }
 
-	@Override
-	synchronized void start() {
-		ImapHostManagerImpl.getDeclaredField('store').accessible = true
-		super.start()
-	}
+    /**
+     * Get a specific message
+     * @param index
+     * @return specific message or null if not found
+     */
+    MimeMessage getMessage(int index) {
+        return index < messagesCount ? messages[index] : null
+    }
 
-	@Override
-	synchronized void stop() {
-		super.stop()
-	}
-	
-	void deleteAllMessages() {
-		managers.imapHostManager.store.listMailboxes('*')*.deleteAllMessages()
-	}
-	
-	int getMessagesCount() {
-		getMessages().size()
-	}
-	
-	Collection<MimeMessage> getMessages() {
-		getReceivedMessages().toList()
-	}
-	
-	MimeMessage getMessage(int index) {
-		def messages = getMessages()
-		if (index < messages.size()) {
-			messages[index]
-		} else {
-			null
-		}
-	}
-	
-	MimeMessage getLatestMessage() {
-		def messages = getMessages()
-		if (messages) {
-			messages.last()
-		} else {
-			null
-		}
-	}
+    /**
+     * Get latest message
+     * @return latest message or null if not found
+     */
+    MimeMessage getLatestMessage() {
+        return messages ? messages.last() : null
+    }
+
 }

@@ -40,9 +40,9 @@ dependencies {
     testImplementation "io.micronaut:micronaut-inject-groovy"
     testImplementation "org.grails:grails-web-testing-support"
 
-    implementation "com.icegreen:greenmail:2.0.0"
-    implementation 'jakarta.mail:jakarta.mail-api:2.0.1'
-    api "com.icegreen:greenmail:2.0.0"
+    implementation "com.icegreen:greenmail:1.6.14"
+    implementation 'jakarta.mail:jakarta.mail-api:1.6.7'
+    api "com.icegreen:greenmail:1.6.14"
 }
 
 bootRun {
