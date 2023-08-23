@@ -1,68 +1,158 @@
 buildscript {
-    ext {
-        grailsVersion = project.grailsVersion
-    }
     repositories {
         mavenLocal()
+        maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://repo.grails.org/grails/core" }
     }
     dependencies {
-        classpath "org.grails:grails-gradle-plugin:$grailsVersion"
+        classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
+        classpath 'io.github.gradle-nexus:publish-plugin:1.0.0'
     }
 }
 
-version "2.0.0.RC3"
-group "org.grails.plugins"
+apply plugin: 'org.grails.grails-plugin'
+apply plugin: 'org.grails.grails-gsp'
+apply plugin: 'java-library'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+apply plugin: 'io.github.gradle-nexus.publish-plugin'
 
-apply plugin:"eclipse"
-apply plugin:"idea"
-apply plugin:"org.grails.grails-plugin"
-apply plugin:"org.grails.grails-plugin-publish"
-apply plugin:"org.grails.grails-gsp"
+group 'io.github.gpc'
 
-ext {
-    grailsVersion = project.grailsVersion
-    gradleWrapperVersion = project.gradleWrapperVersion
-}
-
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenLocal()
+    mavenCentral()
     maven { url "https://repo.grails.org/grails/core" }
 }
 
-dependencyManagement {
-    imports {
-        mavenBom "org.grails:grails-bom:$grailsVersion"
-    }
-    applyMavenExclusions false
-}
-
 dependencies {
-    compile "org.springframework.boot:spring-boot-starter-logging"
-    compile "org.springframework.boot:spring-boot-autoconfigure"
-    compile "org.grails:grails-core"
-    compile "org.springframework.boot:spring-boot-starter-actuator"
-    compile "org.springframework.boot:spring-boot-starter-tomcat"
-    compile "org.grails:grails-dependencies"
-    compile "org.grails:grails-web-boot"
-    profile "org.grails.profiles:web-plugin"
-    testCompile "org.grails:grails-plugin-testing"
-
     console "org.grails:grails-console"
+    compileOnly 'org.grails:grails-core'
+    compileOnly 'org.grails:grails-dependencies'
+    compileOnly "org.grails:grails-logging"
+    compileOnly "org.grails:grails-plugin-services"
+    compileOnly "org.grails:grails-plugin-url-mappings"
+    compileOnly "org.grails.plugins:gsp"
+    profile "org.grails.profiles:web-plugin"
+    testImplementation "io.micronaut:micronaut-inject-groovy"
+    testImplementation "org.grails:grails-web-testing-support"
 
-    compile "com.icegreen:greenmail:1.5.3"
+    implementation "com.icegreen:greenmail:2.0.0"
+    implementation 'jakarta.mail:jakarta.mail-api:2.0.1'
+    api "com.icegreen:greenmail:2.0.0"
 }
 
-grailsPublish {
-    userOrg = "grails"
-    githubSlug = 'gpc/greenmail'
-    license {
-        name = 'Apache-2.0'
+bootRun {
+    ignoreExitValue true
+    jvmArgs(
+            '-Dspring.output.ansi.enabled=always',
+            '-noverify',
+            '-XX:TieredStopAtLevel=1',
+            '-Xmx1024m')
+    sourceResources sourceSets.main
+    String springProfilesActive = 'spring.profiles.active'
+    systemProperty springProfilesActive, System.getProperty(springProfilesActive)
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+bootJar.enabled = false
+
+tasks.register('sourceJar', Jar) {
+    from { ["LICENSE.txt"] }
+    from sourceSets.main.allSource
+    archiveClassifier = "sources"
+}
+
+artifacts {
+    archives jar, sourceJar
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId project.name
+            version project.version
+            groupId project.group
+            from components.java
+            artifact sourceJar
+            pom.withXml {
+                asNode().children().last() + {
+                    resolveStrategy = Closure.DELEGATE_FIRST
+                    name 'GreenMail Plugin'
+                    description 'Grails GreenMail Plugin'
+                    url 'https://github.com/gpc/greenmail'
+                    scm {
+                        url 'https://github.com/gpc/greenmail'
+                        connection 'scm:git@github.com:gpc/greenmail.git'
+                        developerConnection 'scm:git@github.com:gpc/greenmail.git'
+                    }
+                    issueManagement {
+                        system 'Github Issues'
+                        url 'https://github.com/gpc/greenmail/issues'
+                    }
+                    licenses {
+                        license {
+                            name 'The Apache Software License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution 'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'gpc'
+                            name 'Grails Plugin Collective'
+                        }
+                    }
+                }
+            }
+        }
     }
-    title = "GreenMail Plugin"
-    desc = "Grails GreenMail Plugin"
-    developers = [gpc: "Grails Plugin Collective"]
+}
+
+ext."signing.keyId" = project.findProperty('signing.keyId') ?: System.getenv('SIGNING_KEY_ID')
+ext."signing.password" = project.findProperty('signing.password') ?: System.getenv('SIGNING_PASSPHRASE')
+ext."signing.secretKeyRingFile" = project.findProperty('signing.secretKeyRingFile') ?: (System.getenv('SIGNING_PASSPHRASE') ?: "${System.getProperty('user.home')}/.gnupg/secring.gpg")
+
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+
+afterEvaluate {
+    signing {
+        required { isReleaseVersion }
+        sign publishing.publications.maven
+    }
+}
+
+tasks.withType(Sign).configureEach {
+    onlyIf { isReleaseVersion }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            def ossUser = System.getenv('SONATYPE_USERNAME') ?: project.findProperty('sonatypeOss2Username') ?: ''
+            def ossPass = System.getenv('SONATYPE_PASSWORD') ?: project.findProperty("sonatypeOss2Password") ?: ''
+            def ossStagingProfileId = System.getenv('SONATYPE_STAGING_PROFILE_ID') ?: project.findProperty('sonatypeOssStagingProfileIdJms') ?: ''
+
+            nexusUrl = uri('https://s01.oss.sonatype.org/service/local/')
+            snapshotRepositoryUrl = uri('https://s01.oss.sonatype.org/content/repositories/snapshots/')
+            username = ossUser
+            password = ossPass
+            stagingProfileId = ossStagingProfileId
+        }
+    }
+}
+
+tasks.register('snapshotVersion') {
+    doLast {
+        if (!project.version.endsWith('-SNAPSHOT')) {
+            ant.propertyfile(file: "gradle.properties") {
+                entry(key: "version", value: "${project.version}-SNAPSHOT")
+            }
+        }
+    }
 }

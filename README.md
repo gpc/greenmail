@@ -1,7 +1,7 @@
-Greenmail Plugin for Grails 3
+Greenmail Plugin for Grails 5
 =============================
 
-This is a fork of grails greenmail plugin for grails 3.
+This is a fork of grails greenmail plugin for grails 5.
 
 INSTALL
 -------
@@ -10,8 +10,8 @@ Add a dependency for the plugin in `build.gradle`:
 
 ```
 
-dependencies {    
-    compile 'org.grails.plugins:greenmail:2.0.0.RC2'    
+dependencies {
+    compile 'io.github.gpc:greenmail:5.0.0'
 }
 
 ```
@@ -109,4 +109,3 @@ This is a fully functional plugin, though there are some features that I think w
 
 * Messages sent by the Grails Mail plugin have duplicate "TO:" fields in the raw message and in the address list, for instance if the recipient is spam@piragua.com, then that email address is listed twice when you retrieve the address list for RecipientType.TO (e.g. GreenMailUtil.getAddressList(message.getRecipients(javax.mail.Message.RecipientType.TO))
 * Ability to view HTML email messages as they appear in a mail client rather than as RAW message.
-
