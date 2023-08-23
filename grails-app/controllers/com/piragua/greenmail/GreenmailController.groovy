@@ -16,60 +16,64 @@
 package com.piragua.greenmail
 
 import com.icegreen.greenmail.util.GreenMailUtil
-import grails.converters.JSON
+import grails.web.mime.MimeType
+import groovy.json.JsonBuilder
+
+import javax.mail.Message
+import javax.mail.internet.MimeMessage
 
 class GreenmailController {
 
     def greenMail
 
-    def index() {redirect action: 'list'}
+    def index() { redirect action: 'list' }
 
     def list() {
         withFormat {
             html {
-                return [list: greenMail.getReceivedMessages().sort({it.sentDate}).reverse()]
+                return [list: greenMail.getReceivedMessages().sort({ it.sentDate }).reverse()]
             }
             js {
                 List jsonMessages = []
-                List messages = greenMail.getReceivedMessages().sort({it.sentDate}).reverse()
-                messages.eachWithIndex {message, index ->
+                List<MimeMessage> messages = greenMail.getReceivedMessages().sort({ it.sentDate }).reverse().toList()
+                messages.eachWithIndex { message, index ->
                     jsonMessages << createMessageMap(message, index)
                 }
-                render jsonMessages as JSON
+                render render(contentType: MimeType.JSON.name, text: new JsonBuilder(jsonMessages).toString())
             }
         }
     }
 
-    def show() {
-        def messages = Arrays.asList(greenMail.getReceivedMessages().sort({it.sentDate}).reverse())
-        def specificMessage = messages[Integer.valueOf(params.id).intValue()]
+    def show(String id) {
+        List<MimeMessage> messages = greenMail.getReceivedMessages().sort({ it.sentDate }).reverse().toList()
+        MimeMessage specificMessage = messages[Integer.valueOf(id).intValue()]
         withFormat {
             html {
-                def header
+                String header
                 specificMessage.getAllHeaders().each() {
                     header += it.getName() + ': ' + it.getValue() + '<br/>'
                 }
-                render  header + specificMessage.getContent()
+                render header + specificMessage.getContent()
             }
             js {
-                render createMessageMap(specificMessage, params.id) as JSON
+                render(contentType: MimeType.JSON.name, text: new JsonBuilder(createMessageMap(specificMessage, id)).toString())
             }
         }
-    }
-
-    private createMessageMap(message, index) {
-        Map messageMap = [
-                id: index,
-                sent: message.sentDate,
-                subject: message.subject,
-                to: GreenMailUtil.getAddressList(message.getRecipients(javax.mail.Message.RecipientType.TO)),
-                body: GreenMailUtil.getWholeMessage(message)
-        ]
-        return messageMap
     }
 
     def clear() {
         greenMail.deleteAllMessages()
-        render 'Email messages have been cleared'
+        render(contentType: MimeType.HTML.name) { div('Email messages have been cleared') }
+    }
+
+    private static createMessageMap(MimeMessage message, index) {
+        Map messageMap = [
+                id     : index,
+                sent   : message.sentDate,
+                subject: message.subject,
+                to     : GreenMailUtil.getAddressList(message.getRecipients(Message.RecipientType.TO)),
+                body   : GreenMailUtil.getWholeMessage(message)
+        ]
+        return messageMap
     }
 }
