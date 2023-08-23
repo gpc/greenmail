@@ -41,6 +41,7 @@ dependencies {
     testImplementation "org.grails:grails-web-testing-support"
 
     implementation "com.icegreen:greenmail:2.0.0"
+    implementation 'jakarta.mail:jakarta.mail-api:2.0.1'
     api "com.icegreen:greenmail:2.0.0"
 }
 
