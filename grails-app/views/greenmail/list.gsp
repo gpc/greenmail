@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<%@ page import="javax.mail.internet.MimeMessage; javax.mail.Message; com.icegreen.greenmail.util.GreenMailUtil" %>
+<%@ page import="jakarta.mail.internet.MimeMessage; jakarta.mail.Message; com.icegreen.greenmail.util.GreenMailUtil" %>
 <head>
 	<title>Email List</title>
 
