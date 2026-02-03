@@ -18,7 +18,7 @@ package grails.plugin.greenmail
 import groovy.transform.CompileStatic
 import groovy.transform.InheritConstructors
 
-import javax.mail.internet.MimeMessage
+import jakarta.mail.internet.MimeMessage
 
 /**
  * This class provides convenience methods added to the original GreenMail class

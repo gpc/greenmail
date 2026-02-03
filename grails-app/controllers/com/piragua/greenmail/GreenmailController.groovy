@@ -19,8 +19,8 @@ import com.icegreen.greenmail.util.GreenMailUtil
 import grails.web.mime.MimeType
 import groovy.json.JsonBuilder
 
-import javax.mail.Message
-import javax.mail.internet.MimeMessage
+import jakarta.mail.Message
+import jakarta.mail.internet.MimeMessage
 
 class GreenmailController {
 

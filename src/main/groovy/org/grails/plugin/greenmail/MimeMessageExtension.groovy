@@ -15,8 +15,8 @@
  */
 package org.grails.plugin.greenmail
 
-import javax.mail.Message
-import javax.mail.internet.MimeMessage
+import jakarta.mail.Message
+import jakarta.mail.internet.MimeMessage
 
 /**
  * @since 2.0.0

@@ -1,7 +1,7 @@
-Greenmail Plugin for Grails 5
+Greenmail Plugin for Grails 7
 =============================
 
-This is a fork of grails greenmail plugin for grails 5.
+This is a fork of grails greenmail plugin for grails 7.
 
 INSTALL
 -------
@@ -10,14 +10,14 @@ Add a dependency for the plugin in `build.gradle`:
 
 ```groovy
 dependencies {
-    testImplementation 'io.github.gpc:greenmail:5.0.0'
+    testImplementation 'io.github.gpc:greenmail:7.0.0-SNAPHOT'
     
 }
 ```
 
 If you need to type your `MimeMessages` you also need to depend on:
 ```groovy
-    testImplementation 'jakarta.mail:jakarta.mail-api:1.6.7'
+    testImplementation 'jakarta.mail:jakarta.mail-api:2.1.3'
 ```
 
 USAGE
