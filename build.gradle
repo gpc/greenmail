@@ -1,41 +1,39 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        maven {
-            url = 'https://repo.grails.org/grails/restricted'
-        }
-    }
-    dependencies { // Not Published to Gradle Plugin Portal
-        classpath platform("org.apache.grails:grails-bom:$grailsVersion")
-        classpath "org.apache.grails:grails-gradle-plugins"
-    }
-}
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
-plugins {
-    id "war"
-    id "idea"
-    id "eclipse"
-}
-
-// Not Published to Gradle Plugin Portal
-apply plugin: "org.apache.grails.gradle.grails-plugin"
+version = projectVersion
+group "io.github.gpc"
 
 apply plugin: 'java-library'
-apply plugin: 'maven-publish'
-apply plugin: 'signing'
-apply plugin: 'io.github.gradle-nexus.publish-plugin'
+apply plugin: "org.apache.grails.gradle.grails-plugin"
+apply plugin: 'org.apache.grails.gradle.grails-publish'
 
-group 'io.github.gpc'
+ext {
+    buildInstant = java.util.Optional.ofNullable(System.getenv("SOURCE_DATE_EPOCH"))
+            .filter(s -> !s.isEmpty())
+            .map(Long::parseLong)
+            .map(Instant::ofEpochSecond)
+            .orElseGet(Instant::now)
+    formattedBuildDate = DateTimeFormatter.ISO_INSTANT.format(buildInstant)
+    buildDate = (buildInstant as Instant).atZone(ZoneOffset.UTC) // for reproducible builds
+}
 
 repositories {
-    mavenLocal()
     mavenCentral()
-    maven { url "https://repo.grails.org/grails/restricted" }
+    maven { url = 'https://repo.grails.org/grails/restricted' }
+    maven {
+        url = 'https://repository.apache.org/content/groups/snapshots'
+        content {
+            includeVersionByRegex('org[.]apache[.](grails|groovy).*', '.*', '.*-SNAPSHOT')
+        }
+    }
 }
 
 dependencies {
     profile "org.apache.grails.profiles:plugin"
-    developmentOnly "org.springframework.boot:spring-boot-devtools" // Spring Boot DevTools may cause performance slowdowns or compatibility issues on larger applications
+    developmentOnly "org.springframework.boot:spring-boot-devtools"
+    // Spring Boot DevTools may cause performance slowdowns or compatibility issues on larger applications
     implementation platform("org.apache.grails:grails-bom:$grailsVersion")
 
     console "org.apache.grails:grails-console"
@@ -51,108 +49,39 @@ dependencies {
 
 compileJava.options.release = 17
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+}
+
+grailsPublish {
+    githubSlug = 'gpc/greenmail'
+    license {
+        name = 'Apache-2.0'
+    }
+    title = 'GreenMail Plugin'
+    desc = "This plugin allows to have a mock greenmail SMTP (and more) server running inside a Grails application during development and test. It provides a view on the messages that was captured during sending mail"
+    developers = [
+            ldaley        : "Luke Daley",
+            sbglasius     : "Søren Berg Glasius",
+            mjhugo        : "Mike Hugo",
+            antonevane    : "Anton N",
+            jeffscottbrown: "Jeff Scott Brown",
+            graemerocher  : "Graeme Rocher",
+            yohannrub     : "Yohann Rubinsztejn",
+            ZacharyKlein  : "Zachary Klein",
+            ragufronz     : "ragufronz",
+            kwongpan      : "Anthony",
+            bkoehm        : "Brian Koehmstedt",
+            zyro23        : "zyro",
+            alvarosanchez : "Álvaro Sánchez-Mariscal",
+            'ivo-k'       : "Ivo K",
+    ]
+
+}
+
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
 }
 
-// https://github.com/apache/grails-core/issues/15321
-tasks.withType(GroovyCompile).configureEach {
-    groovyOptions.optimizationOptions.indy = false
-}
-
-bootJar.enabled = false
-
-tasks.register('sourceJar', Jar) {
-    from { ["LICENSE.txt"] }
-    from sourceSets.main.allSource
-    archiveClassifier = "sources"
-}
-
-artifacts {
-    archives jar, sourceJar
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            artifactId project.name
-            version project.version
-            groupId project.group
-            from components.java
-            artifact sourceJar
-            pom.withXml {
-                asNode().children().last() + {
-                    resolveStrategy = Closure.DELEGATE_FIRST
-                    name 'GreenMail Plugin'
-                    description 'Grails GreenMail Plugin'
-                    url 'https://github.com/gpc/greenmail'
-                    scm {
-                        url 'https://github.com/gpc/greenmail'
-                        connection 'scm:git@github.com:gpc/greenmail.git'
-                        developerConnection 'scm:git@github.com:gpc/greenmail.git'
-                    }
-                    issueManagement {
-                        system 'Github Issues'
-                        url 'https://github.com/gpc/greenmail/issues'
-                    }
-                    licenses {
-                        license {
-                            name 'The Apache Software License, Version 2.0'
-                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                            distribution 'repo'
-                        }
-                    }
-                    developers {
-                        developer {
-                            id 'gpc'
-                            name 'Grails Plugin Collective'
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-ext."signing.keyId" = project.findProperty('signing.keyId') ?: System.getenv('SIGNING_KEY_ID')
-ext."signing.password" = project.findProperty('signing.password') ?: System.getenv('SIGNING_PASSPHRASE')
-ext."signing.secretKeyRingFile" = project.findProperty('signing.secretKeyRingFile') ?: (System.getenv('SIGNING_PASSPHRASE') ?: "${System.getProperty('user.home')}/.gnupg/secring.gpg")
-
-ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
-
-afterEvaluate {
-    signing {
-        required { isReleaseVersion }
-        sign publishing.publications.maven
-    }
-}
-
-tasks.withType(Sign).configureEach {
-    onlyIf { isReleaseVersion }
-}
-
-nexusPublishing {
-    repositories {
-        sonatype {
-            def ossUser = System.getenv('SONATYPE_USERNAME') ?: project.findProperty('sonatypeOss2Username') ?: ''
-            def ossPass = System.getenv('SONATYPE_PASSWORD') ?: project.findProperty("sonatypeOss2Password") ?: ''
-            def ossStagingProfileId = System.getenv('SONATYPE_STAGING_PROFILE_ID') ?: project.findProperty('sonatypeOssStagingProfileIdJms') ?: ''
-
-            nexusUrl = uri('https://s01.oss.sonatype.org/service/local/')
-            snapshotRepositoryUrl = uri('https://s01.oss.sonatype.org/content/repositories/snapshots/')
-            username = ossUser
-            password = ossPass
-            stagingProfileId = ossStagingProfileId
-        }
-    }
-}
-
-tasks.register('snapshotVersion') {
-    doLast {
-        if (!project.version.endsWith('-SNAPSHOT')) {
-            ant.propertyfile(file: "gradle.properties") {
-                entry(key: "version", value: "${project.version}-SNAPSHOT")
-            }
-        }
-    }
-}
+apply from: layout.projectDirectory.file('gradle/docs-config.gradle')
+apply from: layout.projectDirectory.file('gradle/post-publish.gradle')

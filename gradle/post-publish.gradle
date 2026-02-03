@@ -1,0 +1,12 @@
+tasks.register('printPublicationInfo') {
+    group = 'publishing'
+    doLast {
+        publishing.publications.each { pub ->
+            logger.lifecycle  "📦 ${pub.name}: ${pub.groupId}:${pub.artifactId}:${pub.version}"
+        }
+    }
+}
+
+tasks.withType(AbstractPublishToMaven).configureEach {
+    finalizedBy(tasks.named('printPublicationInfo'))
+}

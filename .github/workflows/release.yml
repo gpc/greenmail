@@ -1,64 +1,165 @@
 name: Release
 on:
-    release:
-        types: [ published ]
+  release:
+    types: [ published ]
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  JAVA_VERSION: '17.0.15' # this must be a specific version for reproducible builds
+  RELEASE_TAG_PREFIX: 'v'
 jobs:
-    release:
-        runs-on: ubuntu-latest
+  publish:
+    permissions:
+      packages: read  #  pre-release workflow
+      contents: write  #  to create release
+      issues: write  #  to modify milestones
+    runs-on: ubuntu-latest
+    outputs:
+      release_version: ${{ steps.release_version.outputs.value }}
+      extract_repository_name: ${{ steps.extract_repository_name.outputs.repository_name }}
+    steps:
+      - name: "📝 Store the current release version"
+        id: release_version
+        run: |
+          export RELEASE_VERSION="${{ github.ref_name }}"
+          export RELEASE_VERSION=${RELEASE_VERSION:${#RELEASE_TAG_PREFIX}}
+          echo "Found Release Version: ${RELEASE_VERSION}"
+          echo "value=${RELEASE_VERSION}" >> $GITHUB_OUTPUT
+      - name: "Extract repository name"
+        id: extract_repository_name
+        run: |
+          echo "repository_name=${GITHUB_REPOSITORY##*/}" >> $GITHUB_OUTPUT
+      - name: "📥 Checkout the repository"
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: v${{ steps.release_version.outputs.value }}
+      - name: 'Ensure Common Build Date' # to ensure a reproducible build
+        run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> "$GITHUB_ENV"
+      - name: "Ensure source files use common date"
+        run: |
+          find . -depth \( -type f -o -type d \) -exec touch -d "@${SOURCE_DATE_EPOCH}" {} +
+      - name: "☕️ Setup JDK"
+        uses: actions/setup-java@v4
+        with:
+          distribution: liberica
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: "🐘 Setup Gradle"
+        uses: gradle/actions/setup-gradle@v4
+      - name: "⚙️ Run pre-release"
+        uses: grails/github-actions/pre-release@asf
         env:
-            GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
-            GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
-        steps:
-            -   name: Checkout repository
-                uses: actions/checkout@v2
-                with:
-                    token: ${{ secrets.GH_TOKEN }}
-            -   uses: gradle/wrapper-validation-action@v1
-            -   name: Set up JDK
-                uses: actions/setup-java@v1
-                with:
-                    java-version: 8
-            -   name: Get latest release version number
-                id: get_version
-                uses: battila7/get-version-action@v2
-            -   name: Run pre-release
-                uses: micronaut-projects/github-actions/pre-release@master
-                with:
-                    token: ${{ secrets.GITHUB_TOKEN }}
-            -   name: Publish to Sonatype OSSRH
-                env:
-                    SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-                    SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-                    SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
-                    SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
-                    SIGNING_PASSPHRASE: ${{ secrets.SIGNING_PASSPHRASE }}
-                    SECRING_FILE: ${{ secrets.SECRING_FILE }}
-                    RELEASE_VERSION: ${{ steps.get_version.outputs.version-without-v }}
-                run: |
-                    echo "${SECRING_FILE}" | base64 -d > "${GITHUB_WORKSPACE}/secring.gpg"
-                    echo "Publishing Artifacts for $RELEASE_VERSION"
-                    (set -x; ./gradlew -Pversion="${RELEASE_VERSION}" -Psigning.secretKeyRingFile="${GITHUB_WORKSPACE}/secring.gpg" publishToSonatype closeAndReleaseSonatypeStagingRepository --no-daemon)
-            -   name: Bump patch version by one
-                uses: actions-ecosystem/action-bump-semver@v1
-                id: bump_semver
-                with:
-                  current_version: ${{steps.get_version.outputs.version-without-v }}
-                  level: patch
-            -   name: Set version in gradle.properties
-                env:
-                    NEXT_VERSION: ${{ steps.bump_semver.outputs.new_version }}
-                run: |
-                    echo "Preparing next snapshot"
-                    ./gradlew snapshotVersion -Pversion="${NEXT_VERSION}"
-            -   name: Commit & Push changes
-                uses: actions-js/push@master
-                with:
-                    github_token: ${{ secrets.GITHUB_TOKEN }}
-                    author_name: ${{ secrets.GIT_USER_NAME }}
-                    author_email: $${ secrets.GIT_USER_EMAIL }}
-                    message: 'Set version to next SNAPSHOT'
-            -   name: Run post-release
-                if: success()
-                uses: micronaut-projects/github-actions/post-release@master
-                with:
-                    token: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_VERSION: ${{ steps.release_version.outputs.value }}
+      - name: "🔐 Generate key file for artifact signing"
+        env:
+          SECRING_FILE: ${{ secrets.SECRING_FILE }}
+        run: |
+          printf "%s" "$SECRING_FILE" | base64 -d > "${{ github.workspace }}/secring.gpg"
+      - name: "🧩 Run Assemble"
+        id: assemble
+        run: |
+          ./gradlew -U assemble -Psigning.secretKeyRingFile=${{ github.workspace }}/secring.gpg -Psigning.keyId=${{ secrets.SIGNING_KEY }}
+        env:
+          GRAILS_PUBLISH_RELEASE: 'true'
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSPHRASE: ${{ secrets.SIGNING_PASSPHRASE }}
+      - name: "📤 Publish to Maven Central"
+        env:
+          GRAILS_PUBLISH_RELEASE: 'true'
+          NEXUS_PUBLISH_USERNAME: ${{ secrets.NEXUS_PUBLISH_USERNAME }}
+          NEXUS_PUBLISH_PASSWORD: ${{ secrets.NEXUS_PUBLISH_PASSWORD }}
+          NEXUS_PUBLISH_URL: ${{ secrets.NEXUS_PUBLISH_RELEASE_URL }}
+          NEXUS_PUBLISH_DESCRIPTION: '${{ steps.extract_repository_name.outputs.repository_name }}:${{ steps.release_version.outputs.value }}'
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSPHRASE: ${{ secrets.SIGNING_PASSPHRASE }}
+        run: >
+          ./gradlew
+          -Psigning.keyId=${{ secrets.SIGNING_KEY }}
+          -Psigning.secretKeyRingFile=${{ github.workspace }}/secring.gpg
+          publishMavenPublicationToSonatypeRepository
+          closeSonatypeStagingRepository
+      - name: "Generate Build Date file"
+        run: echo "$SOURCE_DATE_EPOCH" >> build/BUILD_DATE.txt
+      - name: "Upload Build Date file"
+        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631
+        with:
+          files: build/BUILD_DATE.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  release:
+    needs: publish
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: "📥 Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: v${{ needs.publish.outputs.release_version }}
+      - name: "☕️ Setup JDK"
+        uses: actions/setup-java@v4
+        with:
+          distribution: liberica
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: "🐘 Setup Gradle"
+        uses: gradle/actions/setup-gradle@v4
+      - name: "📤 Release staging repository"
+        env:
+          GRAILS_PUBLISH_RELEASE: 'true'
+          NEXUS_PUBLISH_USERNAME: ${{ secrets.NEXUS_PUBLISH_USERNAME }}
+          NEXUS_PUBLISH_PASSWORD: ${{ secrets.NEXUS_PUBLISH_PASSWORD }}
+          NEXUS_PUBLISH_URL: ${{ secrets.NEXUS_PUBLISH_RELEASE_URL }} 
+          NEXUS_PUBLISH_DESCRIPTION: '${{ needs.publish.outputs.extract_repository_name }}:${{ needs.publish.outputs.release_version }}'
+        run: >
+          ./gradlew
+          findSonatypeStagingRepository
+          releaseSonatypeStagingRepository
+      - name: "📖 Generate Documentation"
+        if: ${{ hashFiles('src/main/asciidoc/**') != '' }}
+        run: ./gradlew docs
+      - name: "📤 Publish Documentation to Github Pages"
+        uses: apache/grails-github-actions/deploy-github-pages@asf
+        if: ${{ hashFiles('src/main/asciidoc/**') != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GRADLE_PUBLISH_RELEASE: 'true'
+          SOURCE_FOLDER: build/docs
+          VERSION: ${{ needs.publish.outputs.release_version }}
+      - name: "⚙️ Run post-release"
+        uses: apache/grails-github-actions/post-release@asf
+  notify-slack:
+    name: Notify Slack
+    needs: [ publish, release ] 
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare release body
+        id: body
+        run: |
+          if [ -n "${{ github.event.release.body }}" ]; then
+            echo "body=${{ github.event.release.body }}" >> $GITHUB_OUTPUT
+          else
+            echo "body=No release notes provided." >> $GITHUB_OUTPUT
+          fi
+      - name: Send Slack message
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          payload: |
+            {
+              "text": ":rocket: *${{ github.repository }}* just released *${{ github.event.release.tag_name }}*",
+              "attachments": [
+                {
+                  "color": "#36a64f",
+                  "title": "${{ github.event.release.name }}",
+                  "title_link": "${{ github.event.release.html_url }}",
+                  "text": ${{ 
+                    toJson(steps.body.outputs.body) 
+                  }}
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -23,37 +23,38 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class GreenmailGrailsPlugin extends Plugin {
 
-	// the version or versions of Grails the plugin is designed for
-	def grailsVersion = "5.0.0 > *"
-	// resources that are excluded from plugin packaging
-	def pluginExcludes = [
-			"grails-app/views/error.gsp"
-	]
+    // the version or versions of Grails the plugin is designed for
+    def grailsVersion = "7.0.0 > *"
+    // resources that are excluded from plugin packaging
+    def pluginExcludes = [
+            "grails-app/views/error.gsp"
+    ]
 
-	def title = "Greenmail Plugin for Grails"
-	def author = "Grails Plugin Collective"
-	def authorEmail = "grails-plugin-collective@gmail.com"
-	def description = "Provides a wrapper around GreenMail (http://www.icegreen.com/greenmail/) and provides a view that displays 'sent' messages"
-	def documentation = "http://grails.org/plugin/greenmail"
+    def title = "Greenmail Plugin for Grails"
+    def author = "Grails Plugin Collective"
+    def authorEmail = "grails-plugin-collective@gmail.com"
+    def description = "Provides a wrapper around GreenMail (https://greenmail-mail-test.github.io/greenmail) and provides a view that displays 'sent' messages"
+    def documentation = "https://github.com/gpc/greenmail"
 
-	def profiles = ['web']
+    def profiles = ['web']
 
     private boolean isGreenMailEnabled() {
         return !config.getProperty("grails.plugin.greenmail.disabled", Boolean, false)
     }
 
-	@Override
-	Closure doWithSpring() { {->
-			if (greenMailEnabled) {
-				int smtpPort = config.getProperty("grails.plugin.greenmail.ports.smtp", Integer, ServerSetupTest.SMTP.port)
-				ServerSetup smtp = new ServerSetup(smtpPort, null, ServerSetup.PROTOCOL_SMTP)
+    @Override
+    Closure doWithSpring() {
+        { ->
+            if (greenMailEnabled) {
+                int smtpPort = config.getProperty("grails.plugin.greenmail.ports.smtp", Integer, ServerSetupTest.SMTP.port)
+                ServerSetup smtp = new ServerSetup(smtpPort, null, ServerSetup.PROTOCOL_SMTP)
 
-				greenMail(GreenMail, [smtp] as ServerSetup[])
-			} else {
+                greenMail(GreenMail, [smtp] as ServerSetup[])
+            } else {
                 log.debug("GreenMail is disabled")
             }
-		}
-	}
+        }
+    }
 
     private GreenMail getGreenMailBean() {
         return applicationContext.getBean("greenMail", GreenMail)
