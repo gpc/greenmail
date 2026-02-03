@@ -131,9 +131,9 @@ jobs:
       - name: "⚙️ Run post-release"
         uses: apache/grails-github-actions/post-release@asf
   notify-slack:
-    name: Notify Slack
+    name: Notify Slack 
     needs: [ publish, release ] 
-    if: ${{ success() }}
+    if: ${{ false && success() }} # Malefunctions right now, thus disabled
     runs-on: ubuntu-latest
     steps:
       - name: Prepare release body
