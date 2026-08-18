@@ -95,4 +95,72 @@ class MimeMessageExtensionSpec extends Specification {
         then:
         result == ['bcc1@example.com', 'bcc2@example.com']
     }
+
+    void "getTo returns null when there are no TO recipients"() {
+        given:
+        def mimeMessage = new MimeMessage(session)
+
+        when:
+        def result = mimeMessage.to
+
+        then:
+        result == null
+    }
+
+    void "getTos returns an empty list when there are no TO recipients"() {
+        given:
+        def mimeMessage = new MimeMessage(session)
+
+        when:
+        def result = mimeMessage.tos
+
+        then:
+        result == []
+    }
+
+    void "getCc returns null when there are no CC recipients"() {
+        given:
+        def mimeMessage = new MimeMessage(session)
+
+        when:
+        def result = mimeMessage.cc
+
+        then:
+        result == null
+    }
+
+    void "getCcs returns an empty list when there are no CC recipients"() {
+        given:
+        def mimeMessage = new MimeMessage(session)
+
+        when:
+        def result = mimeMessage.ccs
+
+        then:
+        result == []
+    }
+
+    void "getBcc returns null when there are no BCC recipients"() {
+        given:
+        def mimeMessage = new MimeMessage(session)
+        mimeMessage.setRecipients(Message.RecipientType.TO, [new InternetAddress('to1@example.com')] as Address[])
+
+        when:
+        def result = mimeMessage.bcc
+
+        then:
+        result == null
+    }
+
+    void "getBccs returns an empty list when there are no BCC recipients"() {
+        given:
+        def mimeMessage = new MimeMessage(session)
+        mimeMessage.setRecipients(Message.RecipientType.TO, [new InternetAddress('to1@example.com')] as Address[])
+
+        when:
+        def result = mimeMessage.bccs
+
+        then:
+        result == []
+    }
 }
