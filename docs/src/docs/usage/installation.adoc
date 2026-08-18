@@ -1,0 +1,35 @@
+[[installation]]
+=== Installation
+
+Add the plugin to the `dependencies` block of your `build.gradle`. GreenMail is a development and
+test tool, so `testImplementation` is normally the right configuration:
+
+[source,groovy,subs="attributes+"]
+----
+dependencies {
+    testImplementation 'io.github.gpc:greenmail:{version}'
+}
+----
+
+If you also want to browse captured messages while running the application with `bootRun`, use
+`developmentOnly` in addition to `testImplementation`.
+
+The plugin exposes `com.icegreen:greenmail` as an `api` dependency, so `GreenMail` and the
+`GreenMailUtil` helpers are available to your tests without declaring them yourself. If you want to
+declare types on your `MimeMessage` variables, add the mail API too:
+
+[source,groovy]
+----
+dependencies {
+    testImplementation 'jakarta.mail:jakarta.mail-api:2.1.3'
+}
+----
+
+*Requirements:*
+
+* Grails 7.0.0 or higher
+* Java 17 or higher
+
+==== Previous versions
+
+For Grails 5 use version 5.0.0 of this plugin. For Grails 3 use version 2.0.0.

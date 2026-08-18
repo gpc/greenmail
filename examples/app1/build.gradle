@@ -1,0 +1,44 @@
+plugins {
+    id 'config.example-app'
+}
+
+version = projectVersion
+group = 'app1'
+
+dependencies {
+    profile 'org.apache.grails.profiles:web'
+    console 'org.apache.grails:grails-console'
+
+    implementation project(':greenmail')
+
+    implementation platform("org.apache.grails:grails-bom:$grailsVersion")
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-tomcat'
+
+    // Supplies the JavaMailSender the integration tests send through
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    implementation 'org.apache.grails:grails-core'
+    implementation 'org.apache.grails:grails-web-boot'
+    implementation 'org.apache.grails:grails-logging'
+    implementation 'org.apache.grails:grails-databinding'
+    implementation 'org.apache.grails:grails-services'
+    implementation 'org.apache.grails:grails-url-mappings'
+    implementation 'org.apache.grails:grails-interceptors'
+    implementation 'org.apache.grails:grails-layout'
+    implementation 'org.apache.grails:grails-gsp'
+
+    runtimeOnly 'org.fusesource.jansi:jansi'
+    runtimeOnly 'cloud.wondrify:asset-pipeline-grails'
+
+    testAndDevelopmentOnly 'org.webjars.npm:bootstrap'
+    testAndDevelopmentOnly 'org.webjars.npm:bootstrap-icons'
+    testAndDevelopmentOnly 'org.webjars.npm:jquery'
+
+    testImplementation 'org.apache.grails:grails-testing-support-web'
+    testImplementation 'org.spockframework:spock-core'
+}

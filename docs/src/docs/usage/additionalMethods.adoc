@@ -1,0 +1,61 @@
+[[additionalMethods]]
+=== Additional methods and extensions
+
+[[greenmail-bean]]
+==== The `greenMail` bean
+
+`grails.plugin.greenmail.GreenMail` extends `com.icegreen.greenmail.util.GreenMail` and adds a few
+Groovy-friendly members on top of the inherited API:
+
+[cols="2,3"]
+|===
+|Member |Description
+
+|`messages`
+|The received messages as a `List<MimeMessage>` rather than an array.
+
+|`messagesCount`
+|The number of received messages.
+
+|`getMessage(int index)`
+|The message at the given index.
+
+|`latestMessage`
+|The most recently received message, or `null` if none were received.
+
+|`deleteAllMessages()`
+|Clears the mailbox. Call this from `cleanup()` in specifications.
+|===
+
+[[mimemessage-extensions]]
+==== `MimeMessage` extension properties
+
+The plugin registers a Groovy extension module that adds recipient properties to
+`jakarta.mail.internet.MimeMessage`, so recipients can be read without going through
+`getRecipients(RecipientType)`:
+
+[cols="2,3"]
+|===
+|Property |Description
+
+|`to` / `cc` / `bcc`
+|The first `TO` / `CC` / `BCC` recipient as a `String`, or `null` if there is none.
+
+|`tos` / `ccs` / `bccs`
+|All `TO` / `CC` / `BCC` recipients as a `List<String>`, or an empty list if there are none.
+|===
+
+`MimeMessage.getRecipients(RecipientType)` returns `null` when the message has no recipient of that
+type. The plural properties normalise that to an empty list, so reading a recipient type the message
+does not carry needs no guard:
+
+[source,groovy]
+----
+MimeMessage message = greenMail.latestMessage
+
+message.to              // 'first@example.com'
+message.tos             // ['first@example.com', 'second@example.com']
+message.ccs             // ['copied@example.com']
+message.bcc             // null, when the message has no BCC recipients
+message.bccs            // []
+----

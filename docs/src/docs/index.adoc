@@ -1,0 +1,8 @@
+= GreenMail Plugin for Grails - Reference Documentation
+Grails Plugins Collective
+
+include::introduction.adoc[]
+
+include::usage.adoc[]
+
+include::releaseNotes.adoc[]

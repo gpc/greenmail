@@ -1,0 +1,7 @@
+[[sourceCode]]
+=== Source code
+
+The full source code for this plugin can be found on https://github.com/gpc/greenmail[GitHub].
+
+For issues, improvements or new features go to the plugin's
+https://github.com/gpc/greenmail/issues[GitHub issues].

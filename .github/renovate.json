@@ -1,61 +1,71 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
+    "config:recommended",
+    ":semanticCommitTypeAll(deps)",
+    "group:allNonMajor"
   ],
-  "labels": ["type: dependency upgrade"],
+  "labels": [
+    "deps"
+  ],
+  "schedule": [
+    "before 6am on monday"
+  ],
+  "gradle": {
+    "enabled": true,
+    "fileMatch": [
+      "(^|/)build\\.gradle$",
+      "(^|/)settings\\.gradle$",
+      "(^|/)gradle\\.properties$",
+      "build-logic/src/main/groovy/.*\\.gradle$"
+    ]
+  },
+  "gradle-wrapper": {
+    "enabled": true
+  },
+  "github-actions": {
+    "enabled": true
+  },
   "packageRules": [
     {
-      "matchUpdateTypes": ["major"],
-      "enabled": false
-    },
-    {
-      "matchPackagePatterns": ["*"],
-      "allowedVersions": "!/SNAPSHOT$/"
-    },
-    {
+      "description": "Group all Grails dependencies together",
       "matchPackagePatterns": [
-        "^org\\.codehaus\\.groovy"
+        "^org\\.apache\\.grails"
       ],
-      "groupName": "groovy monorepo"
+      "groupName": "grails"
     },
     {
-      "matchPackageNames": [
-        "org.grails:grails-bom",
-        "org.grails:grails-bootstrap",
-        "org.grails:grails-codecs",
-        "org.grails:grails-console",
-        "org.grails:grails-core",
-        "org.grails:grails-databinding",
-        "org.grails:grails-dependencies",
-        "org.grails:grails-docs",
-        "org.grails:grails-encoder",
-        "org.grails:grails-gradle-model",
-        "org.grails:grails-logging",
-        "org.grails:grails-plugin-codecs",
-        "org.grails:grails-plugin-controllers",
-        "org.grails:grails-plugin-databinding",
-        "org.grails:grails-plugin-datasource",
-        "org.grails:grails-plugin-domain-class",
-        "org.grails:grails-plugin-i18n",
-        "org.grails:grails-plugin-interceptors",
-        "org.grails:grails-plugin-mimetypes",
-        "org.grails:grails-plugin-rest",
-        "org.grails:grails-plugin-services",
-        "org.grails:grails-plugin-url-mappings",
-        "org.grails:grails-plugin-url-validation",
-        "org.grails:grails-shell",
-        "org.grails:grails-spring",
-        "org.grails:grails-test",
-        "org.grails:grails-validation",
-        "org.grails:grails-web",
-        "org.grails:grails-web-boot",
-        "org.grails:grails-web-common",
-        "org.grails:grails-web-databinding",
-        "org.grails:grails-web-fileupload",
-        "org.grails:grails-web-mvc",
-        "org.grails:grails-web-url-mappings"
+      "description": "Group all Spring Boot dependencies together",
+      "matchPackagePatterns": [
+        "^org\\.springframework\\.boot"
       ],
-      "groupName": "grails monorepo"
+      "groupName": "spring-boot"
+    },
+    {
+      "description": "Group all GitHub Actions updates together",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "groupName": "github-actions"
+    },
+    {
+      "description": "Group all Spock/testing dependencies together",
+      "matchPackagePatterns": [
+        "^org\\.spockframework"
+      ],
+      "groupName": "spock"
+    },
+    {
+      "description": "Automerge minor and patch updates for dev dependencies",
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "matchPackagePatterns": [
+        "^com\\.adarshr:gradle-test-logger-plugin"
+      ],
+      "automerge": true
     }
-  ]
+  ],
+  "ignoreDeps": []
 }

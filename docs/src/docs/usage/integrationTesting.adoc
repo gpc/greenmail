@@ -1,0 +1,55 @@
+[[integrationTesting]]
+=== Usage in integration tests
+
+Inject the `greenMail` bean into an `@Integration` specification and assert on the messages the
+application sent. Clearing the mailbox between features keeps specifications independent:
+
+[source,groovy]
+----
+import com.icegreen.greenmail.util.GreenMailUtil
+import grails.plugin.greenmail.GreenMail
+import grails.plugins.mail.MailService
+import grails.testing.mixin.integration.Integration
+import jakarta.mail.internet.MimeMessage
+import spock.lang.Specification
+
+@Integration
+class GreenmailExampleSpec extends Specification {
+
+    MailService mailService
+    GreenMail greenMail
+
+    void cleanup() {
+        greenMail.deleteAllMessages()
+    }
+
+    void 'sent mail is captured by GreenMail'() {
+        when:
+        mailService.sendMail {
+            to 'to@example.com'
+            from 'from@example.com'
+            subject 'subject'
+            body 'hello world'
+        }
+
+        then:
+        greenMail.messagesCount == 1
+
+        and:
+        MimeMessage message = greenMail.latestMessage
+        message.subject == 'subject'
+        message.to == 'to@example.com'
+        GreenMailUtil.getBody(message) == 'hello world'
+    }
+}
+----
+
+WARNING: Put each assertion on its own line in a `then:` or `and:` block. Assertions written inside a
+`with` closure or a helper closure are not evaluated as Spock conditions and will silently pass.
+
+`waitForIncomingEmail` is useful when mail is sent asynchronously:
+
+[source,groovy]
+----
+assert greenMail.waitForIncomingEmail(5000, 1)
+----

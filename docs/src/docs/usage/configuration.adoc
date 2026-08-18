@@ -1,0 +1,58 @@
+[[configuration]]
+=== Configuration
+
+The plugin assumes a Java mail provider is installed — for instance the Grails Mail plugin — and
+that the provider is pointed at the port the mock GreenMail SMTP server listens on.
+
+[[configuration-options]]
+==== Options
+
+[cols="2,1,4"]
+|===
+|Property |Default |Description
+
+|`grails.plugin.greenmail.disabled`
+|`false`
+|Set to `true` to disable the plugin entirely. No `greenMail` bean is registered, no server is
+started, and the `/greenmail` URL mappings are not installed.
+
+|`grails.plugin.greenmail.ports.smtp`
+|`3025`
+|The port the mock SMTP server listens on. The default comes from GreenMail's own
+`ServerSetupTest.SMTP.port`.
+|===
+
+[[configuration-example]]
+==== Example configuration
+
+Using the Grails Mail plugin, wiring the provider to GreenMail is a matter of setting
+`grails.mail.port`:
+
+[source,yaml]
+----
+--- # Mail and GreenMail configuration
+environments:
+    development:
+        grails:
+            mail:
+                port: 3025 # Use the default GreenMail port
+    test:
+        grails:
+            plugin:
+                greenmail:
+                    ports:
+                        smtp: 2525 # Use a custom GreenMail port
+            mail:
+                port: "${grails.plugin.greenmail.ports.smtp}"
+    production:
+        grails:
+            plugin:
+                greenmail:
+                    disabled: true # Never run GreenMail in production
+            mail: # Your real SMTP server; see the mail plugin for options
+                server: smtp.example.com
+                port: 25
+----
+
+NOTE: Always disable the plugin in production. It starts a real SMTP listener and retains every
+message it receives in memory.
