@@ -30,17 +30,17 @@ The following URLs are mapped:
 [[webInterface-json]]
 ==== JSON output
 
-Append a `.js` extension to get the captured messages as JSON, which is handy for scripted checks:
+Append a `.json` extension to `list` or `show` to get the captured messages as JSON, which is handy
+for scripted checks:
 
 ----
-http://localhost:8080/greenmail/list.js
+http://localhost:8080/greenmail/list.json
+http://localhost:8080/greenmail/show/0.json
 ----
 
-That responds with `application/json` and a list of objects carrying `id`, `sent`, `subject`, `to`
-and `body`.
+Both respond with `application/json`. `list.json` returns a list of objects carrying `id`, `sent`,
+`subject`, `to` and `body`; `show/$id.json` returns a single such object.
 
-CAUTION: Use `.js`, not `.json`. The controller's `withFormat` block handles the `html` and `js`
-formats only, so a `.json` extension falls back to the first block and silently returns the HTML
-view with a `text/html` content type rather than JSON.
+NOTE: The `.js` extension returns the same JSON and is retained for backwards compatibility.
 
 When `grails.plugin.greenmail.disabled` is `true` these URL mappings are not installed.
