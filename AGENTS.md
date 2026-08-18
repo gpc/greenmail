@@ -107,7 +107,8 @@ newer JDK makes the Groovy compiler emit bytecode that JaCoCo cannot analyse.
    to `jakarta.mail.internet.MimeMessage`, registered via
    `META-INF/services/org.codehaus.groovy.runtime.ExtensionModule`.
 4. **`GreenmailController`** + `GreenmailUrlMappings` + `views/greenmail/list.gsp` serve the message
-   list. Both HTML and JSON are supported via `withFormat`.
+   list. `withFormat` handles the `html` and `js` formats, so JSON is served from `.js` — a
+   `.json` extension falls back to the HTML block. See the docs caveat.
 
 ### Core Classes
 

@@ -39,11 +39,23 @@ The plugin registers a Groovy extension module that adds recipient properties to
 |Property |Description
 
 |`to` / `cc` / `bcc`
-|The first `TO` / `CC` / `BCC` recipient as a `String`, or `null` if there is none.
+|The first `TO` / `CC` / `BCC` recipient as a `String`.
 
 |`tos` / `ccs` / `bccs`
 |All `TO` / `CC` / `BCC` recipients as a `List<String>`.
 |===
+
+CAUTION: These properties read through `MimeMessage.getRecipients(RecipientType)`, which returns
+`null` when the message has no recipient of that type. As a result `tos` / `ccs` / `bccs` return
+`null` rather than an empty list for an absent recipient type, and `to` / `cc` / `bcc` throw a
+`NullPointerException`. Guard with the plural property before reading the singular one:
+
+[source,groovy]
+----
+if (message.bccs) {
+    println message.bcc
+}
+----
 
 [source,groovy]
 ----
