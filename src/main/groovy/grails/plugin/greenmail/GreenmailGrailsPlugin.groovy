@@ -62,7 +62,7 @@ class GreenmailGrailsPlugin extends Plugin {
 
     @Override
     void doWithApplicationContext() {
-        if (greenMailEnabled) {
+        if (greenMailEnabled && !greenMailBean.running) {
             greenMailBean.start()
             if (greenMailBean.running) {
                 log.info("GreenMail is running with SMTP port ${greenMailBean.smtp.port}")
