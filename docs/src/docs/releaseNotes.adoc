@@ -2,7 +2,9 @@
 == Release Notes
 
 * 7.0.2 - Migrated to the `grails-plugin-template` build structure; guard against starting the
-  GreenMail server twice when the application context is refreshed
+  GreenMail server twice when the application context is refreshed; the `.json` extension on
+  `/greenmail/list` and `/greenmail/show/$id` now returns JSON instead of falling back to the HTML
+  view, and `/greenmail/show/$id` no longer prefixes the message headers with `null`
 * 7.0.1 - Package the precompiled GSP view so the `/greenmail` list renders in consuming applications
 * 7.0.0 - Support for Grails 7, Jakarta Mail and GreenMail 2.x
 * 5.0.0 - Support for Grails 5

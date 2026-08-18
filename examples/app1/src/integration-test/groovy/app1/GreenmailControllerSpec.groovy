@@ -2,6 +2,7 @@ package app1
 
 import grails.plugin.greenmail.GreenMail
 import grails.testing.mixin.integration.Integration
+import groovy.json.JsonSlurper
 import jakarta.mail.internet.MimeMessage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSender
@@ -73,9 +74,28 @@ class GreenmailControllerSpec extends Specification {
         !response.body.contains('grailsLayout:')
     }
 
-    void 'GET /greenmail/list.js returns the captured messages as JSON'() {
+    void 'GET /greenmail/list.json returns the captured messages as JSON'() {
         given:
         sendOne('json subject')
+
+        when:
+        Map response = get('/greenmail/list.json')
+
+        then:
+        response.status == 200
+        response.contentType?.contains('application/json')
+
+        and: 'the whole body parses, so nothing is appended after the JSON document'
+        List parsed = new JsonSlurper().parseText(response.body) as List
+        parsed.size() == 1
+        parsed[0].subject == 'json subject'
+        parsed[0].to == 'to@example.com'
+        parsed[0].id == 0
+    }
+
+    void 'GET /greenmail/list.js returns the same JSON as .json'() {
+        given: 'the .js extension predates .json support and has to keep working'
+        sendOne('js subject')
 
         when:
         Map response = get('/greenmail/list.js')
@@ -85,23 +105,9 @@ class GreenmailControllerSpec extends Specification {
         response.contentType?.contains('application/json')
 
         and:
-        response.text.contains('"subject":"json subject"')
-        response.text.contains('"to":"to@example.com"')
-    }
-
-    void 'the .json extension currently falls back to the HTML view'() {
-        given: 'the controller withFormat block handles html and js, but not json'
-        sendOne('fallback subject')
-
-        when:
-        Map response = get('/greenmail/list.json')
-
-        then: 'Grails falls back to the first format block, so HTML is returned'
-        response.status == 200
-        response.contentType?.contains('text/html')
-
-        and: 'the message is still listed, just rendered as HTML rather than JSON'
-        response.text.contains('fallback subject')
+        List parsed = new JsonSlurper().parseText(response.body) as List
+        parsed.size() == 1
+        parsed[0].subject == 'js subject'
     }
 
     void 'GET /greenmail/show/0 renders the raw message'() {
@@ -114,6 +120,27 @@ class GreenmailControllerSpec extends Specification {
         then:
         response.status == 200
         response.text.contains('shown subject')
+
+        and: 'the headers are listed, and not prefixed with an uninitialised null'
+        !response.body.startsWith('null')
+        response.body.contains('Subject: shown subject<br/>')
+    }
+
+    void 'GET /greenmail/show/0.json returns the message as JSON'() {
+        given:
+        sendOne('shown json subject')
+
+        when:
+        Map response = get('/greenmail/show/0.json')
+
+        then:
+        response.status == 200
+        response.contentType?.contains('application/json')
+
+        and:
+        Map parsed = new JsonSlurper().parseText(response.body) as Map
+        parsed.subject == 'shown json subject'
+        parsed.to == 'to@example.com'
     }
 
     void 'GET /greenmail/clear empties the mailbox'() {

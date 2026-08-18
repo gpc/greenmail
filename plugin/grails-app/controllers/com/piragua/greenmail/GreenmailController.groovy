@@ -29,41 +29,49 @@ class GreenmailController {
     def index() { redirect action: 'list' }
 
     def list() {
+        List<MimeMessage> messages = sortedMessages()
+        // Handed to both the js and json format blocks, so the two extensions render identically.
+        Closure renderAsJson = {
+            List jsonMessages = []
+            messages.eachWithIndex { message, index ->
+                jsonMessages << createMessageMap(message, index)
+            }
+            render(contentType: MimeType.JSON.name, text: new JsonBuilder(jsonMessages).toString())
+        }
         withFormat {
             html {
-                return [list: greenMail.getReceivedMessages().sort({ it.sentDate }).reverse()]
+                return [list: messages]
             }
-            js {
-                List jsonMessages = []
-                List<MimeMessage> messages = greenMail.getReceivedMessages().sort({ it.sentDate }).reverse().toList()
-                messages.eachWithIndex { message, index ->
-                    jsonMessages << createMessageMap(message, index)
-                }
-                render render(contentType: MimeType.JSON.name, text: new JsonBuilder(jsonMessages).toString())
-            }
+            js renderAsJson
+            json renderAsJson
         }
     }
 
     def show(String id) {
-        List<MimeMessage> messages = greenMail.getReceivedMessages().sort({ it.sentDate }).reverse().toList()
-        MimeMessage specificMessage = messages[Integer.valueOf(id).intValue()]
+        MimeMessage specificMessage = sortedMessages()[Integer.valueOf(id).intValue()]
+        Closure renderAsJson = {
+            render(contentType: MimeType.JSON.name, text: new JsonBuilder(createMessageMap(specificMessage, id)).toString())
+        }
         withFormat {
             html {
-                String header
-                specificMessage.getAllHeaders().each() {
+                String header = ''
+                specificMessage.getAllHeaders().each {
                     header += it.getName() + ': ' + it.getValue() + '<br/>'
                 }
                 render header + specificMessage.getContent()
             }
-            js {
-                render(contentType: MimeType.JSON.name, text: new JsonBuilder(createMessageMap(specificMessage, id)).toString())
-            }
+            js renderAsJson
+            json renderAsJson
         }
     }
 
     def clear() {
         greenMail.deleteAllMessages()
         render(contentType: MimeType.HTML.name) { div('Email messages have been cleared') }
+    }
+
+    private List<MimeMessage> sortedMessages() {
+        return greenMail.getReceivedMessages().sort({ it.sentDate }).reverse().toList()
     }
 
     private static createMessageMap(MimeMessage message, index) {
