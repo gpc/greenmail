@@ -141,6 +141,9 @@ class GreenmailControllerSpec extends Specification {
         Map parsed = new JsonSlurper().parseText(response.body) as Map
         parsed.subject == 'shown json subject'
         parsed.to == 'to@example.com'
+
+        and: 'id is the numeric index, as it is in list.json, not the String path parameter'
+        parsed.id == 0
     }
 
     void 'GET /greenmail/clear empties the mailbox'() {

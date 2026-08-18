@@ -48,9 +48,10 @@ class GreenmailController {
     }
 
     def show(String id) {
-        MimeMessage specificMessage = sortedMessages()[Integer.valueOf(id).intValue()]
+        int index = Integer.valueOf(id).intValue()
+        MimeMessage specificMessage = sortedMessages()[index]
         Closure renderAsJson = {
-            render(contentType: MimeType.JSON.name, text: new JsonBuilder(createMessageMap(specificMessage, id)).toString())
+            render(contentType: MimeType.JSON.name, text: new JsonBuilder(createMessageMap(specificMessage, index)).toString())
         }
         withFormat {
             html {
@@ -74,7 +75,7 @@ class GreenmailController {
         return greenMail.getReceivedMessages().sort({ it.sentDate }).reverse().toList()
     }
 
-    private static createMessageMap(MimeMessage message, index) {
+    private static Map createMessageMap(MimeMessage message, int index) {
         Map messageMap = [
                 id: index,
                 sent: message.sentDate,
