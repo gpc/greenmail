@@ -1,13 +1,15 @@
 [[releaseNotes]]
 == Release Notes
 
-* 7.0.2 - Migrated to the `grails-plugin-template` build structure; guard against starting the
-  GreenMail server twice when the application context is refreshed; the `.json` extension on
+* 7.0.2 - Migrated to the `grails-plugin-template` build structure
+** guard against starting the
+  GreenMail server twice when the application context is refreshed
+** the `.json` extension on
   `/greenmail/list` and `/greenmail/show/$id` now returns JSON instead of falling back to the HTML
-  view, `/greenmail/show/$id` no longer prefixes the message headers with `null`, and the `id` field
-  of `/greenmail/show/$id.json` is now a number, matching `/greenmail/list.json; the `MimeMessage` `tos` / `ccs` /
-  `bccs` properties now return an empty list instead of `null` when the message has no recipient of
-  that type, and `to` / `cc` / `bcc` return `null` instead of throwing a `NullPointerException`
+  view
+** `/greenmail/show/$id` no longer prefixes the message headers with `null`, and the `id` field
+  of `/greenmail/show/$id.json` is now a number, matching `/greenmail/list.json`
+** the `MimeMessage` `tos` / `ccs` / `bccs` properties now return an empty list instead of `null` when the message has no recipient of that type, and `to` / `cc` / `bcc` return `null` instead of throwing a `NullPointerException`
 * 7.0.1 - Package the precompiled GSP view so the `/greenmail` list renders in consuming applications
 * 7.0.0 - Support for Grails 7, Jakarta Mail and GreenMail 2.x
 * 5.0.0 - Support for Grails 5
