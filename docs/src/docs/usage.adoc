@@ -1,0 +1,12 @@
+[[usage]]
+== Usage
+
+include::usage/installation.adoc[]
+
+include::usage/configuration.adoc[]
+
+include::usage/integrationTesting.adoc[]
+
+include::usage/webInterface.adoc[]
+
+include::usage/additionalMethods.adoc[]

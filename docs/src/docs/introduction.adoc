@@ -1,0 +1,15 @@
+[[introduction]]
+== Introduction
+
+The GreenMail plugin runs a mock https://greenmail-mail-test.github.io/greenmail/[GreenMail] SMTP
+server inside a Grails application, so mail the application sends during development and test is
+captured instead of delivered.
+
+Captured messages can be asserted on from integration tests, or browsed in a running application
+through the view the plugin ships at `/greenmail`.
+
+include::introduction/license.adoc[]
+
+include::introduction/acknowledgements.adoc[]
+
+include::introduction/sourceCode.adoc[]

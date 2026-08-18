@@ -1,0 +1,34 @@
+---
+project:
+  name: "greenmail"
+  title: "GreenMail Plugin for Grails"
+  description: "Runs a mock GreenMail SMTP server inside a Grails application during development\
+    \ and test, so mail the application sends is captured instead of delivered. Captured messages\
+    \ can be asserted on from integration tests, or browsed in a running application."
+  org: "Grails Plugins Collective"
+github:
+  org: "gpc"
+  project: "greenmail"
+license:
+  name: "Apache-2.0"
+contributors:
+  ldaley: "Luke Daley"
+  sbglasius: "Søren Berg Glasius"
+  mjhugo: "Mike Hugo"
+  antonevane: "Anton N"
+  jeffscottbrown: "Jeff Scott Brown"
+  graemerocher: "Graeme Rocher"
+  yohannrub: "Yohann Rubinsztejn"
+  ZacharyKlein: "Zachary Klein"
+  ragufronz: "ragufronz"
+  kwongpan: "Anthony"
+  bkoehm: "Brian Koehmstedt"
+  zyro23: "zyro"
+  alvarosanchez: "Álvaro Sánchez-Mariscal"
+  ivo-k: "Ivo K"
+versions:
+  current: "7.0.1"
+  previous:
+  - "7.0.1"
+  ignore:
+  - "snapshot"

@@ -1,0 +1,33 @@
+[[webInterface]]
+=== Usage in a running application
+
+The plugin ships a controller and view that list the messages the application has "sent". With the
+application running, browse to:
+
+----
+http://localhost:8080/greenmail
+----
+
+The list shows the sent date, subject and recipients of each captured message. Follow the *Show* link
+on a row to view the raw message, including headers.
+
+The following URLs are mapped:
+
+[cols="2,3"]
+|===
+|URL |Description
+
+|`/greenmail` or `/greenmail/list`
+|Lists all captured messages.
+
+|`/greenmail/show/$id`
+|Shows the raw content of a single message by its index in the list.
+
+|`/greenmail/clear`
+|Deletes all captured messages.
+|===
+
+Each action also responds to a `.json` extension — `/greenmail/list.json` returns the captured
+messages as JSON, which is handy for scripted checks.
+
+When `grails.plugin.greenmail.disabled` is `true` these URL mappings are not installed.
