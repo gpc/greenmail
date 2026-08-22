@@ -76,6 +76,11 @@ jobs:
             echo "No build/index.html generated — skipping gh-pages update"
             exit 0
           fi
+          if ! git ls-remote --exit-code --heads origin gh-pages > /dev/null; then
+            echo "No gh-pages branch on origin yet — skipping gh-pages update. It will" \
+                 "be created on this project's first release."
+            exit 0
+          fi
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           cp build/index.html /tmp/index.html

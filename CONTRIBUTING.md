@@ -24,7 +24,7 @@ curl -s "https://get.sdkman.io" | bash
 git clone https://github.com/gpc/greenmail.git
 cd greenmail
 
-# Install the required SDK versions (Java 17, Gradle 8.14.4, Groovy 4.0.30)
+# Install the required SDK versions (Java 21, Gradle 9.6.0, Groovy 5.0.8)
 sdk env install
 
 # Build the project
@@ -110,8 +110,8 @@ categorize changes in release notes.
 
 ### Coding Standards
 
-- **Language:** Groovy 4.0 on Java 17
-- **Framework:** Grails 7.0
+- **Language:** Groovy 5.0 on Java 21
+- **Framework:** Grails 8.0
 - **Testing:** Spock Framework on JUnit Platform
 - Follow existing code conventions in the project
 - Metric names must conform to [RFC 7230 token rules](https://tools.ietf.org/html/rfc7230#section-3.2.6)

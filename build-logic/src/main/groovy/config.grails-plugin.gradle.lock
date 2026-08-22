@@ -1,0 +1,1 @@
+Pinned: uses the Grails 8 `bom = null` in place of the removed `springDependencyManagement` flag. Remove this lock once the template upgrades.

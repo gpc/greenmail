@@ -7,11 +7,11 @@ server inside a Grails application during development and test, so mail the appl
 captured instead of delivered. It also ships a controller and GSP view that list captured messages at
 `/greenmail`.
 
-- **Language:** Groovy 4.0.30 on Java 17
-- **Framework:** Grails 7.x
-- **Build System:** Gradle 8.14.4 (with wrapper)
+- **Language:** Groovy 5.0.8 on Java 21
+- **Framework:** Grails 8.x
+- **Build System:** Gradle 9.6.0 (with wrapper)
 - **Published artifact:** `io.github.gpc:greenmail`
-- **Current Version:** 7.0.2-SNAPSHOT
+- **Current Version:** 8.0.0-SNAPSHOT
 - **License:** Apache 2.0
 
 ## Skill Files (Best Practices)
@@ -91,9 +91,9 @@ Tool versions are pinned in `.sdkmanrc` and are **build-critical**: `config.comp
 major version from it and fails if it is missing. Run `sdk env install` before building — building on a
 newer JDK makes the Groovy compiler emit bytecode that JaCoCo cannot analyse.
 
-- Java: `17.0.18-librca`
-- Gradle: `8.14.4`
-- Groovy: `4.0.30`
+- Java: `21.0.7-librca`
+- Gradle: `9.6.0`
+- Groovy: `5.0.8`
 
 ## Architecture
 

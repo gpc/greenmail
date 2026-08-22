@@ -101,26 +101,25 @@ dependencies {
 }
 ```
 
-### Share properties from root gradle.properties
+### Reading root gradle.properties from build-logic
 
-The `build-logic/build.gradle` reads the root `gradle.properties` and exposes those values as extra properties so
-convention plugins can reference them (e.g., `grailsVersion`):
+Gradle already exposes every key in the root `gradle.properties` as a project property on each subproject automatically
+-- no `allprojects {}` loop or other propagation code is needed for that. That's how `plugin/build.gradle` and
+`docs/build.gradle` can reference `projectVersion`, `projectGroup`, and `grailsVersion` directly.
+
+`build-logic/build.gradle` is a separate case: it is its own build (a composite build root), so it does not
+automatically see the main build's `gradle.properties`. It reads the file directly into a local `Properties` object
+just to resolve the third-party plugin coordinates it declares as dependencies:
 
 ```groovy
-file('../gradle.properties').withInputStream { is ->
-    extensions.extraProperties.set(
-            'gradleProperties',
-            new Properties().tap { load(is) }
-    )
-}
+// build-logic/build.gradle
+def gradleProperties = new Properties()
+file('../gradle.properties').withInputStream { gradleProperties.load(it) }
 
-allprojects { project ->
-    gradleProperties.stringPropertyNames().each { key ->
-        project.extensions.extraProperties.set(
-                key,
-                gradleProperties.getProperty(key)
-        )
-    }
+dependencies {
+    implementation platform("org.apache.grails:grails-bom:${gradleProperties.grailsVersion}")
+    implementation "com.adarshr:gradle-test-logger-plugin:${gradleProperties.testLoggerVersion}"
+    // ...
 }
 ```
 
@@ -171,7 +170,7 @@ When configuring project extensions (like publishing metadata or third-party plu
 // GOOD - explicit it in extensions.configure() for type hints
 extensions.configure(GrailsPublishExtension) {
     it.artifactId = project.name
-    it.githubSlug = 'gpc/grails-export'
+    it.githubSlug = 'my-org/my-plugin'
     it.license.name = 'Apache-2.0'
     it.title = 'My Plugin'
     it.developers = [name: 'Developer Name']
@@ -225,10 +224,12 @@ plugins {
 | `code-style.gradle`              | Checkstyle + CodeNarc code style checking (configs in `build-logic/config/`)         |
 | `compile.gradle`                 | Java/Groovy compilation settings (UTF-8, incremental, Java release from `.sdkmanrc`) |
 | `docs.gradle`                    | Documentation aggregation (Groovydoc + Asciidoctor)                                  |
-| `example-app.gradle`             | Example app config (grails-web, GSP, assets)                                         |
+| `example-app.gradle`             | Example app config (app-run, compile, grails-assets, testing, grails-web, GSP)       |
 | `grails-assets.gradle`           | Asset pipeline with Bootstrap/jQuery WebJars                                         |
-| `grails-plugin.gradle`           | Grails plugin application                                                            |
-| `publish.gradle`                 | Per-project Maven publishing metadata                                                |
+| `grails-plugin.gradle`           | Applies the Grails plugin Gradle plugin, disables Spring dependency management       |
+| `grails-web-plugin.gradle`       | `grails-plugin` + asset-pipeline packaging, for plugins that ship web assets         |
+| `project-metadata.gradle`        | Parses `project.yml` into extra properties (`projectTitle`, `githubOrg`, etc.)       |
+| `publish.gradle`                 | Per-project Maven publishing metadata (applies `project-metadata` itself)            |
 | `publish-root.gradle`            | Root-level Nexus publishing workaround                                               |
 | `testing.gradle`                 | Test framework config (Spock, JUnit Platform, test-logger)                           |
 

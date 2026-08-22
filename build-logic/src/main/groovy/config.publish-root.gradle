@@ -5,7 +5,7 @@
 // version and group must be specified in the root project
 // https://github.com/gradle-nexus/publish-plugin/issues/310
 version = projectVersion
-group = 'io.github.gpc'
+group = projectGroup
 
 def publishedProjects = projectsToPublish
         .tokenize(',')

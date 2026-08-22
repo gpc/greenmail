@@ -29,10 +29,12 @@ dependencies {
     implementation 'org.apache.grails:grails-services'
     implementation 'org.apache.grails:grails-url-mappings'
     implementation 'org.apache.grails:grails-interceptors'
+    // The plugin's GreenmailController is compiled with the RestResponder trait, so a consuming
+    // application needs the transforms on its runtime classpath, not just its test classpath.
+    implementation 'org.apache.grails:grails-rest-transforms'
     implementation 'org.apache.grails:grails-layout'
     implementation 'org.apache.grails:grails-gsp'
 
-    runtimeOnly 'org.fusesource.jansi:jansi'
     runtimeOnly 'cloud.wondrify:asset-pipeline-grails'
 
     testAndDevelopmentOnly 'org.webjars.npm:bootstrap'

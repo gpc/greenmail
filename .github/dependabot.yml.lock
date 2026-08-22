@@ -1,0 +1,1 @@
+Pinned: the Gradle major-version ceiling is >= 10 here, because this repo is already on Gradle 9. Remove this lock once the template upgrades.

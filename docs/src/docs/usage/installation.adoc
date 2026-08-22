@@ -27,9 +27,10 @@ dependencies {
 
 *Requirements:*
 
-* Grails 7.0.0 or higher
-* Java 17 or higher
+* Grails 8.0.0 or higher
+* Java 21 or higher
 
 ==== Previous versions
 
-For Grails 5 use version 5.0.0 of this plugin. For Grails 3 use version 2.0.0.
+For Grails 7 use version 7.0.x of this plugin. For Grails 5 use version 5.0.0, and for Grails 3 use
+version 2.0.0.

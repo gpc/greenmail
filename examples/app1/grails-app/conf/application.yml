@@ -29,32 +29,6 @@ spring:
 
 ---
 grails:
-    mime:
-        disable:
-            accept:
-                header:
-                    userAgents:
-                        - Gecko
-                        - WebKit
-                        - Presto
-                        - Trident
-        types:
-            all: '*/*'
-            css: text/css
-            csv: text/csv
-            form: application/x-www-form-urlencoded
-            html:
-              - text/html
-              - application/xhtml+xml
-            js: text/javascript
-            json:
-              - application/json
-              - text/json
-            multipartForm: multipart/form-data
-            text: text/plain
-            xml:
-              - text/xml
-              - application/xml
     urlmapping:
         cache:
             maxsize: 1000

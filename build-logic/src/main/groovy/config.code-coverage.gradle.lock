@@ -1,0 +1,1 @@
+Pinned: declares the jacocoAgent/jacocoAnt coordinates explicitly, because Grails 8 applies the Grails BOM to every declarable configuration and so suppresses the jacoco plugin defaultDependencies fallback. Remove this lock once the template carries the same fix.
