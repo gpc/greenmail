@@ -1,6 +1,8 @@
 [[releaseNotes]]
 == Release Notes
 
+* 8.0.0
+** Support for Grails 8, Groovy 5, Spring Boot 4 and Java 21
 * 7.0.2
 ** Migrated to the `grails-plugin-template` build structure
 ** Guard against starting the GreenMail server twice when the application context is refreshed

@@ -8,35 +8,45 @@ def pluginProject = provider {
     project(":${project.name - '-root'}")
 }
 
-tasks.register('cleanDocs', Delete) {
+def cleanDocs = tasks.register('cleanDocs', Delete) {
     description = 'Deletes the documentation output'
     group = 'documentation'
 
     delete(rootProject.layout.projectDirectory.dir('build/docs'))
 }
 
-tasks.register('aggregateGroovyApiDoc', Groovydoc) {
+// The Groovydoc task is registered on the plugin project rather than here: it resolves the
+// compile and groovy classpaths of the project it documents, and Gradle forbids a task owned
+// by one project from resolving another project's configurations.
+def gapiDir = rootProject.layout.buildDirectory.dir('docs/gapi').get().asFile
+def pluginProjectPath = pluginProject.get().path
+pluginProject.get().pluginManager.withPlugin('groovy') {
+    def plugin = pluginProject.get()
+    def upstream = plugin.tasks.named('groovydoc', Groovydoc)
+    plugin.tasks.register('groovyApiDoc', Groovydoc) {
+        description = 'Generates Groovy API Documentation for the plugin project under build/docs/gapi'
+        group = 'documentation'
+
+        mustRunAfter(cleanDocs)
+
+        access = GroovydocAccess.PROTECTED
+        includeAuthor = false
+        includeMainForScripts = true
+        processScripts = true
+        exclude('**/Application.groovy')
+
+        source(upstream.map { it.source })
+        destinationDir = gapiDir
+        classpath = plugin.files(upstream.map { it.classpath })
+        groovyClasspath = plugin.files(upstream.map { it.groovyClasspath })
+    }
+}
+
+tasks.register('aggregateGroovyApiDoc') {
     description = 'Generates Groovy API Documentation for the plugin project under build/docs/gapi'
     group = 'documentation'
 
-    def upstream = pluginProject.flatMap {
-        it.tasks.named('groovydoc', Groovydoc)
-    } as Provider<Groovydoc>
-
-    dependsOn(tasks.named('cleanDocs'))
-    dependsOn(upstream)
-
-    access = GroovydocAccess.PROTECTED
-    includeAuthor = false
-    includeMainForScripts = true
-    processScripts = true
-    exclude('**/Application.groovy')
-
-
-    source = { upstream.get().source }
-    destinationDir = rootProject.layout.buildDirectory.dir('docs/gapi').get().asFile
-    classpath = files({ upstream.get().classpath })
-    groovyClasspath = files({ upstream.get().groovyClasspath })
+    dependsOn(cleanDocs, "$pluginProjectPath:groovyApiDoc")
 }
 
 tasks.register('docs') {

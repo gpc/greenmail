@@ -9,6 +9,7 @@ plugins {
 }
 
 extensions.configure(GrailsExtension) {
-    // Plugins should avoid the spring dependency management plugin due to how it prefers certain libraries
-    it.springDependencyManagement = false
+    // Plugins declare the Grails BOM themselves, per configuration, so the platform is not
+    // forced onto consumers' runtime classpath.
+    it.bom = null
 }

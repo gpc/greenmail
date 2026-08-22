@@ -17,7 +17,7 @@ updates:
           - "gradle"
     ignore:
       - dependency-name: "gradle"
-        versions: [ ">= 9" ]
+        versions: [ ">= 10" ]
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
