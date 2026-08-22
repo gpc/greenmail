@@ -3,6 +3,7 @@
 // https://github.com/grails-plugins/grails-plugin-template/tree/main/build-logic
 plugins {
     id 'config.app-run'
+    id 'config.code-coverage'
     id 'config.compile'
     id 'config.grails-assets'
     id 'config.testing'

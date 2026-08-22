@@ -14,14 +14,19 @@ coverage, and build logic is centralized in convention plugins.
 ## Directory Layout
 
 ```
-export/
+my-plugin/
 ├── .github/                    # CI/CD workflows and GitHub config
 │   ├── workflows/
-│   │   ├── ci.yml              # Build, test, publish snapshots
-│   │   ├── code-coverage.yml   # Create a code coverage report
-│   │   ├── code-style.yml      # Check code style
-│   │   ├── release.yml         # Multi-stage release pipeline
-│   │   └── release-notes.yml   # Automated release draft notes
+│   │   ├── ci.yml                    # Build, test, publish snapshots
+│   │   ├── files-sync.yml            # Syncs shared files (incl. skills) to child repos
+│   │   ├── release-notes.yml         # Automated release draft notes
+│   │   ├── update-contributors.yml   # Refreshes contributor list in project.yml
+│   │   └── update-versions.yml       # Automated dependency/version bump PRs
+│   ├── sync/
+│   │   └── workflows/
+│   │       └── release.yml     # Multi-stage release pipeline -- child-repo-only;
+│   │                           #   deliberately kept out of .github/workflows/ so the
+│   │                           #   template repo itself never runs it
 │   ├── release-drafter.yml     # Release drafter categories/labels
 │   └── dependency-graph/
 │       └── external-references.yml  # Maven Central package association
@@ -42,6 +47,8 @@ export/
 │       ├── config.example-app.gradle
 │       ├── config.grails-assets.gradle
 │       ├── config.grails-plugin.gradle
+│       ├── config.grails-web-plugin.gradle
+│       ├── config.project-metadata.gradle
 │       ├── config.publish.gradle
 │       ├── config.publish-root.gradle
 │       └── config.testing.gradle
@@ -56,18 +63,7 @@ export/
 │       └── test/groovy/        # Unit tests ONLY
 │
 ├── examples/                   # Example apps (auto-discovered)
-│   ├── app1/                   # first example app with the plugin enabled
-│   │   ├── build.gradle
-│   │   ├── grails-app/         # Standard Grails app structure
-│   │   │   ├── conf/
-│   │   │   ├── controllers/    # Test controllers
-│   │   │   ├── views/          # Test views (GSP)
-│   │   │   ├── init/
-│   │   │   ├── assets/
-│   │   │   └── i18n/
-│   │   └── src/
-│   │       └── integration-test/  # Integration & functional tests
-│   └── app2/                   # second app showing disable feature
+│   └── app1/                   # first example app with the plugin enabled
 │       ├── build.gradle
 │       ├── grails-app/         # Standard Grails app structure
 │       │   ├── conf/
@@ -80,7 +76,7 @@ export/
 │           └── integration-test/  # Integration & functional tests
 │
 ├── code-coverage/              # JaCoCo coverage aggregation
-│   └── build.gradle            # Declares which projects contribute coverage data
+│   └── build.gradle            # Applies config.code-coverage-aggregate
 │
 ├── docs/                       # Asciidoctor documentation
 │   ├── build.gradle
@@ -126,7 +122,7 @@ It does NOT contain integration tests, functional tests, example controllers, or
 
 All tests requiring a running Grails application live in example apps under `examples/`. Each app:
 
-- Depends on the plugin via `implementation project(':grails-export')`
+- Depends on the plugin via `implementation project(':my-plugin')`
 - Contains test controllers and views that exercise the plugin
 - Contains integration tests under `src/integration-test/`
 - Is auto-discovered by `settings.gradle`
@@ -137,10 +133,11 @@ Convention plugins in `build-logic/` eliminate all duplication:
 
 - Compilation settings: `config.compile.gradle`
 - Test configuration: `config.testing.gradle`
-- Plugin setup: `config.grails-plugin.gradle`
+- Plugin setup: `config.grails-plugin.gradle` / `config.grails-web-plugin.gradle`
+- Project metadata (from `project.yml`): `config.project-metadata.gradle`
 - Example app setup: `config.example-app.gradle`
 - Publishing: `config.publish.gradle`
-- Coverage aggregation: `config.coverage-aggregate.gradle`
+- Coverage aggregation: `config.code-coverage-aggregate.gradle`
 - Code style checking: `config.code-style.gradle`
 
 ### 5. Centralized dependency resolution
@@ -170,8 +167,8 @@ These are available in all subprojects as project properties (`projectVersion`, 
    ```
 3. Add standard Grails app structure under `grails-app/`
 4. Add integration tests under `src/integration-test/groovy/`
-5. The app will be auto-discovered by `settings.gradle` and automatically included in coverage aggregation -- no manual
-   registration needed
+5. The app will be auto-discovered by `settings.gradle` -- no manual registration needed. Note that `config.example-app`
+   does not currently apply `config.code-coverage`, so example apps are not yet part of `jacocoAggregatedReport`
 
 ## Adding a New Convention Plugin
 
@@ -187,7 +184,7 @@ These are available in all subprojects as project properties (`projectVersion`, 
 ./gradlew build
 
 # Plugin unit tests only
-./gradlew :grails-plugin-template:test
+./gradlew :my-plugin:test
 
 # Example app integration tests
 ./gradlew :app1:integrationTest
@@ -215,7 +212,13 @@ the Java version dynamically.
 
 ## CI/CD Pipeline
 
-- **CI**: Builds and tests on every push/PR. Publishes snapshots on push to release branches.
-- **Coverage**: Runs the full build and posts an aggregated JaCoCo coverage summary to the GitHub Actions job summary.
-- **Release**: 4-stage pipeline (stage -> release -> docs -> version bump) triggered by GitHub release.
-- **Release Notes**: Auto-drafts release notes from PRs using release-drafter with category labels.
+- **CI** (`ci.yml`): Builds and tests on every push/PR (`./gradlew build`, which runs unit tests, integration tests, code
+  style, and the aggregated JaCoCo report via `check`). Publishes snapshots on push to `main`/release branches.
+- **Release** (`.github/sync/workflows/release.yml`): 4-job pipeline (stage jar -> release staging repo -> publish docs
+  -> update version index) triggered by a published GitHub release. This workflow is synced into child repos only --
+  the template repository itself never runs it.
+- **Release Notes** (`release-notes.yml`): Auto-drafts release notes from PRs/issues using release-drafter.
+- **Files Sync** (`files-sync.yml`): Syncs shared files (including these `.agents/skills/`) from this template into
+  child plugin repositories.
+- **Update Contributors** (`update-contributors.yml`) / **Update Versions** (`update-versions.yml`): Automated
+  maintenance workflows for `project.yml` contributors and dependency/version bump PRs.

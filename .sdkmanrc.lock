@@ -1,0 +1,1 @@
+Pinned: this repo is on the Grails 8 toolchain (Java 21 / Gradle 9.6.0 / Groovy 5.0.8) while grails-plugin-template is still on Grails 7. Remove this lock once the template upgrades.

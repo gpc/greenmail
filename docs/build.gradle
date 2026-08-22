@@ -6,7 +6,7 @@ plugins {
 }
 
 version = projectVersion
-group = 'io.github.gpc'
+group = projectGroup
 
 def asciidoctorAttributes = [
         'source-highlighter': 'coderay',

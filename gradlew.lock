@@ -1,0 +1,1 @@
+Pinned: Gradle 9.6.0 wrapper for Grails 8. The template still ships the 8.14.4 wrapper. Remove this lock once the template upgrades.
