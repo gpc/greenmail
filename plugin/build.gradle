@@ -22,7 +22,7 @@ dependencies {
     implementation 'jakarta.mail:jakarta.mail-api:2.1.5'
 
     // Public API: grails.plugin.greenmail.GreenMail extends com.icegreen.greenmail.util.GreenMail
-    api 'com.icegreen:greenmail:2.1.12'
+    api 'com.icegreen:greenmail:2.1.13'
 
     testImplementation platform("org.apache.grails:grails-bom:$grailsVersion")
     testImplementation 'org.apache.grails:grails-dependencies-starter-web'
