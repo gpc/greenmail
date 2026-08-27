@@ -187,7 +187,10 @@ if (sdkmanrcFile.exists()) {
         def distUrl = wrapperProps.getProperty('distributionUrl') ?: ''
         def m = distUrl =~ /gradle-([0-9.]+)-/
         if (m.find() && m.group(1) != sdkmanrc.getProperty('gradle')) {
-            err(".sdkmanrc gradle version ('${sdkmanrc.getProperty('gradle')}') does not match the wrapper's " +
+            // Dependabot's gradle-wrapper updates only touch
+            // gradle-wrapper.properties, never .sdkmanrc, so this drifts on
+            // every such PR by construction — a warning, not a hard error.
+            warn(".sdkmanrc gradle version ('${sdkmanrc.getProperty('gradle')}') does not match the wrapper's " +
                 "distributionUrl version ('${m.group(1)}')")
         }
     }
