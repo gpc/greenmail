@@ -28,8 +28,9 @@ contributors:
   ivo-k: "ivo-k"
   alvarosanchez: "Álvaro Sánchez-Mariscal"
 versions:
-  current: "8.0.0-RC1"
+  current: "8.0.0"
   previous:
+  - "8.0.0"
   - "8.0.0-RC1"
   - "8.0.x"
   - "7.0.2"
