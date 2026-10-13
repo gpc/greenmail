@@ -195,6 +195,7 @@ jobs:
       branch: ${{ github.event.release.target_commitish }}
     permissions:
       contents: write
+      pull-requests: write
     secrets: inherit
   close:
     name: "To Next Version"

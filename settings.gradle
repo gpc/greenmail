@@ -2,15 +2,24 @@ import org.gradle.api.initialization.resolve.RepositoriesMode
 
 pluginManagement {
     repositories {
+        // >>> grails-plugin-conventions (managed by grails-plugin-template files-sync, do not edit)
+        mavenCentral()
+        // <<< grails-plugin-conventions
         if (System.getenv('INCLUDE_MAVEN_LOCAL')) {
             mavenLocal()
         }
         maven { url = 'https://repo.grails.org/grails/restricted' }
     }
 
-    includeBuild('./build-logic') {
-        it.name = 'build-logic'
+    // >>> grails-plugin-conventions (managed by grails-plugin-template files-sync, do not edit)
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id.startsWith('config.')) {
+                useModule('org.grails.plugins.gradle:grails-plugin-conventions:1.0.0-RC2')
+            }
+        }
     }
+    // <<< grails-plugin-conventions
 }
 
 plugins {

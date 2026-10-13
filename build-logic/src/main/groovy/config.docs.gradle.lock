@@ -1,1 +1,0 @@
-Pinned: the aggregate Groovydoc task is registered on the plugin project, because Gradle 9 forbids resolving another project configurations. Remove this lock once the template adopts the same fix.
