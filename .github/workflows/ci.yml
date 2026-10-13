@@ -88,6 +88,13 @@ jobs:
           --continue
           --stacktrace
           --rerun-tasks
+      - name: "🧪 Test convention plugins"
+        # template-only: synced repos consume the published plugin and have no conventions/ directory. It is an
+        # included build, so `./gradlew build` does not run its tests.
+        if: ${{ github.repository == 'grails-plugins/grails-plugin-template' && !contains(github.event.head_commit.message, '[skip tests]') }}
+        run: >
+          ./gradlew -p conventions test
+          --stacktrace
   publish:
     # only run the publishing task on this repo (not on forks), and never in the
     # template repo itself — grails-plugin-template has no Maven coordinates of its
@@ -148,4 +155,5 @@ jobs:
     uses: ./.github/workflows/update-versions.yml
     permissions:
       contents: write
+      pull-requests: write
     secrets: inherit
